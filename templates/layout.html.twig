@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <header class="p-3 mb-3 border-bottom">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <div class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+                    {% block layout_title %}
+                        {# render title #}
+                    <h1 class="display-4">Marketplace</h1>
+                    {% endblock %}
+                </div>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                </ul>
+
+                <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+                    {# render search form #}
+                    {{ form_start(search_form) }}
+                    {{ form_row(search_form.title) }}
+                    {{ form_row(search_form.category) }}
+                    {{ form_row(search_form.search) }}
+                    {{ form_end(search_form) }}
+                </div>
+                <div class="ms-auto">
+                    <p class="d-inline-flex gap-3">
+                        <a  class="btn btn-primary btn-sm" href="{{ path('home') }}">Home</a>
+                        {% if is_granted('ROLE_MODERATOR') %}
+                            {# if user has a moderator role, render dashboard #}
+                            <a  class="btn btn-primary btn-sm" href="{{ path('admin') }}">Dashboard</a>
+                        {% endif %}
+                        {% if is_granted('ROLE_USER') %}
+                            {# if user has a user role, render other links #}
+                            <a class="btn btn-primary btn-sm" href="{{ path('new_advert') }}">Create Advert</a>
+                            <a class="btn btn-primary btn-sm" href="{{ path('user_advert') }}">My Adverts</a>
+                            <a class="btn btn-primary btn-sm" href="{{ path('show_profile') }}">My Profile</a>
+                            <a  class="btn btn-primary btn-sm" href="{{ path('app_logout') }}">Logout</a>
+                            <img src="{{ asset('images/' ~ app.user.imageFileName) }}" alt="{{ app.user.imageFileName }}" width="52" height="52" class="rounded-circle">
+                        {% else %}
+                            <img src="{{ asset('images/default_image.png') }}" alt=" Default profile picture" width="52" height="52" class="rounded-circle">
+                            <a  class="btn btn-primary btn-sm" href="{{ path('app_login') }}">Login</a>
+                            <a  class="btn btn-primary  btn-sm" href="{{ path('app_register') }}">Register</a>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </header>
+    {% block content %}{% endblock %}
+{% endblock %}

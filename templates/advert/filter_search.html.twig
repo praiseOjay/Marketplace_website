@@ -1,0 +1,37 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <div class="table-group-divider mb-5"></div>
+    <div class="container-fluid text-center">
+        <div class="row row-cols-1 row-cols-2 row-cols-3 row-cols-4 g-5 align-items-center justify-content-center">
+            {# check if pagination is empty #}
+            {% if pagination is empty %}
+                {# display error message if pagination is empty #}
+                <h1>Sorry, Advert does not exist</h1>
+            {% else %}
+            {# display filtered adverts if pagination is not empty #}
+            {% for filtered_advert in pagination %}
+                <div class="col-auto">
+                    <div class="card mb-3" style="max-width: 20rem;">
+                        <img src="{{asset('images/' ~ filtered_advert.imageFileName)}}" alt="{{ filtered_advert.imageFileName }}" class="img-fluid rounded-start rounded-end">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="{{ path('show_advert', {'id': filtered_advert.id}) }}">{{ filtered_advert.Title }}</a></h5>
+                            <p class="card-text">From: {{ advert.getUser().getUsername() }}</p>
+                            <p class="card-text">£{{ filtered_advert.Price }}</p>
+                            <p class="card-text"><small class="text-body-secondary">{{ filtered_advert.Timestamp | date('d/m/y H:i') }}</small></p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            {# display pagination if pagination is not empty #}
+            {{ knp_pagination_render(pagination,'pagination/twitter_bootstrap_v4_pagination.html.twig') }}
+        </ul>
+    </nav>
+{% endblock %}
+

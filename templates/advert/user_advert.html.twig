@@ -1,0 +1,43 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <div class="table-group-divider mb-5"></div>
+    <div class="container-fluid text-center">
+        {# check if pagination is empty #}
+        {% if pagination is empty %}
+            <h1>No Adverts</h1>
+        {% else %}
+        <div class=table-responsive>
+            <table class="table align-middle">
+                <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Timestamp</th>
+                    <th scope="col">Image</th>
+                </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                {# render adverts from pagination #}
+                {% for advert in pagination %}
+                    <tr class="align-middle">
+                        <td>{{ advert.Title }}</td>
+                        <td>{{ advert.Timestamp | date('d/m/y H:i') }}</td>
+                        <td><img src="{{asset('images/' ~ advert.imageFileName)  }}" alt="{{ advert.imageFileName }}" class="img-fluid rounded-start rounded-end" style="max-width: 10rem;"></td>
+                        <td><a class="btn btn-info" href="{{ path('edit_advert', {'id': advert.id}) }}">Edit</a></td>
+                        <td><a class="btn btn-danger" href="{{ path('delete_advert', {'id': advert.id}) }}">Delete</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    {# render pagination #}
+                    {{ knp_pagination_render(pagination,'pagination/twitter_bootstrap_v4_pagination.html.twig') }}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}
+

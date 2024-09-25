@@ -1,0 +1,25 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <div class="table-group-divider mb-5"></div>
+
+    <div class="container-fluid text-center">
+        <div class = "row g-3 align-items-center justify-content-center">
+            <div class="col-auto">
+                <div class = "card mb-3" style="max-width: 50rem;">
+                    {# render advert information #}
+                    <img src="{{asset('images/' ~ advert.imageFileName)  }}" alt="{{ advert.imageFileName }}" class="img-fluid rounded-start rounded-end">
+                    <div class="card-body">
+                        <h2 class="card-title">{{ advert.Title }}</h2>
+                        <p class="card-text">{{ advert.description }}</p>
+                        <p class="card-text">From: {{ advert.getUser().getUsername() }}</p>
+                        <p class="card-text">£{{ advert.Price }}</p>
+                        <p class="card-text">{{ advert.Location }}</p>
+                        <p class="card-text"><small class="text-body-secondary">{{ advert.Timestamp | date('d/m/y H:i') }}</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,24 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <div class="table-group-divider mb-5"></div>
+    <div class="container-fluid text-center">
+        <div class="row">
+            <div class="col">
+                {# render the title #}
+                <h1 class="display-4">Edit Profile</h1>
+            </div>
+        </div>
+        <div class="row g-5 align-items-center justify-content-center">
+            <div class="col-auto">
+                {# render the form #}
+                {{ form_start(form) }}
+                {{ form_row(form.username) }}
+                {{ form_row(form.email) }}
+                {{ form_row(form.imageFile) }}
+                {{ form_row(form.save) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+
+    <div class="table-group-divider mb-5"></div>
+
+    <div class="container-fluid text-center">
+        <div class = "row g-3 align-items-center justify-content-center">
+            <div class="col-auto">
+                <div class = "card mb-3" style="max-width: 50rem;">
+                    {# render user's info #}
+                    <img src="{{asset('images/' ~ app.user.imageFileName)  }}" alt="{{ app.user.imageFileName }}" class="img-fluid rounded-start rounded-end">
+                    <div class="card-body">
+                        <h2 class="card-title">Username: {{ user.Username }}</h2>
+                        <p class="card-text">Email: {{ user.Email }}</p>
+                        <p class="card-text"><a  class="btn btn-primary btn-sm" href="{{ path('edit_profile') }}">Edit</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

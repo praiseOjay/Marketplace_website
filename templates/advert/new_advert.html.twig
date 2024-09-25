@@ -1,0 +1,26 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <div class="table-group-divider mb-5"></div>
+    <div class="container-fluid text-center">
+        <div class="row">
+            <div class="col">
+                <h1 class="display-4">New Advert</h1>
+            </div>
+        </div>
+        <div class="row g-5 align-items-center justify-content-center">
+            <div class="col-auto">
+                {# render the form #}
+                {{ form_start(form) }}
+                {{ form_row(form.title) }}
+                {{ form_row(form.description) }}
+                {{ form_row(form.category) }}
+                {{ form_row(form.price) }}
+                {{ form_row(form.location) }}
+                {{ form_row(form.imageFile) }}
+                {{ form_row(form.save) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

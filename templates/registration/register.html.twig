@@ -1,0 +1,70 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+
+    <div class="table-group-divider mb-5"></div>
+
+    {% block register_title %}
+        <div class="container-fluid">
+            <div class="row row-cols-auto">
+                <div class="col-auto">
+                    {# register title #}
+                <h1 class="display-4">Register</h1>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+
+    {# render errors #}
+    {{ form_errors(registrationForm) }}
+    {% block register_form %}
+<div class="container-fluid text-center">
+    {# render registration form #}
+            {{ form_start(registrationForm) }}
+        <!-- Username -->
+        <div class="row row-cols-auto g-3 justify-content-center">
+            <div class="col-auto">
+                {{ form_label(registrationForm.username, {attr: {'class': 'col-form-label'}}, {label: 'Username'}) }}
+                {{ form_widget(registrationForm.username, {attr: {'class': 'form-control-sm','placeholder': 'Register your username'}}) }}
+            </div>
+        </div>
+
+        <!-- Email -->
+        <div class="row row-cols-auto g-3 justify-content-center">
+            <div class="col-auto">
+                {{ form_label(registrationForm.email, {attr: {'class': 'col-form-label'}}, {label: 'Email'}) }}
+                {{ form_widget(registrationForm.email, {attr: {'class': 'form-control-sm', 'type': 'email', 'placeholder': 'example@email.com'}}) }}
+            </div>
+        </div>
+
+        <!-- Password -->
+        <div class="row row-cols-auto g-3 justify-content-center">
+            <div class="col-auto">
+                {{ form_label(registrationForm.plainPassword, {attr: {'class': 'form-label'}}, {label: 'Password'}) }}
+                {{ form_widget(registrationForm.plainPassword, {attr: {'class': 'form-control-sm'}}) }}
+                <span id="usernameHelpInline" class="form-text">
+                    Must be 6-20 characters long.
+                </span>
+            </div>
+        </div>
+
+        <!-- Agree terms -->
+        <div class="row g-3 justify-content-center">
+            <div class="col-auto">
+                {{ form_label(registrationForm.agreeTerms, {attr: {'class': 'col-form-label'}}, {label: 'Agree terms'}) }}
+            </div>
+            <div class="col-auto">
+                {{ form_widget(registrationForm.agreeTerms) }}
+            </div>
+        </div>
+
+        <!-- Submit button -->
+        <div class="row g-3 justify-content-center">
+            <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Register</button>
+            </div>
+        </div>
+            {{ form_end(registrationForm) }}
+</div>
+    {% endblock %}
+{% endblock %}
