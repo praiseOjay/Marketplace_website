@@ -40,7 +40,7 @@
                         {% for advert in pagination %}
                             <tr>
                                 <td>
-                                    <img src="{{ asset('images/' ~ advert.imageFileName) }}" alt="{{ advert.title }}" class="mp-table-thumb">
+                                    <img src="{{ asset('images/' ~ advert.imageFileName) }}" alt="{{ advert.title }}" class="mp-table-thumb" loading="lazy" decoding="async">
                                 </td>
                                 <td>
                                     <a href="{{ path('show_advert', {'slug': advert.slug}) }}" style="color: var(--mp-text-primary); font-weight: 500;">

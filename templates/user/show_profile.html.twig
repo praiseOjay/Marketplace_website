@@ -9,7 +9,7 @@
             <div class="col-lg-5">
                 <div class="mp-form-card mp-animate-in h-100" style="max-width: 100%;">
                     <div class="text-center mb-4">
-                        <img src="{{ asset('images/' ~ app.user.imageFileName) }}" alt="{{ app.user.username }}" class="rounded-circle mb-3" style="width: 96px; height: 96px; object-fit: cover; border: 3px solid var(--mp-accent);">
+                        <img src="{{ asset('images/' ~ app.user.imageFileName) }}" alt="{{ app.user.username }}" class="rounded-circle mb-3" style="width: 96px; height: 96px; object-fit: cover; border: 3px solid var(--mp-accent);" loading="lazy" decoding="async">
                         <h2>{{ user.username }}</h2>
                     </div>
 

@@ -8,7 +8,7 @@
             {# Left: Image hero #}
             <div class="col-lg-7">
                 <div class="mp-detail-hero">
-                    <img src="{{ asset('images/' ~ advert.imageFileName) }}" alt="{{ advert.title }}">
+                    <img src="{{ asset('images/' ~ advert.imageFileName) }}" alt="{{ advert.title }}" decoding="async">
                     <div class="mp-detail-hero-overlay">
                         <div class="d-flex flex-wrap gap-2 mb-2">
                             {% if advert.category %}

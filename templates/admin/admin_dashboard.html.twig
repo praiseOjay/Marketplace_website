@@ -102,7 +102,7 @@
                             {% for advert in recentAdverts %}
                                 <tr>
                                     <td>
-                                        <img src="{{ asset('images/' ~ advert.imageFileName) }}" alt="{{ advert.title }}" style="width: 48px; height: 36px; object-fit: cover; border-radius: 4px;">
+                                        <img src="{{ asset('images/' ~ advert.imageFileName) }}" alt="{{ advert.title }}" style="width: 48px; height: 36px; object-fit: cover; border-radius: 4px;" loading="lazy" decoding="async">
                                     </td>
                                     <td>
                                         <strong>{{ advert.title }}</strong>

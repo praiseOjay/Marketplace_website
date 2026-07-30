@@ -33,7 +33,7 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $imageFile = $form->get('imageFile')->getData();
             if ($imageFile) {
-                $imageFileName = $fileUploader->upload($imageFile);
+                $imageFileName = $fileUploader->upload($imageFile, true);
                 $user->setImageFileName($imageFileName);
             }
 

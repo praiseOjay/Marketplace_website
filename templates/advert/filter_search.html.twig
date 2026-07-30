@@ -24,7 +24,7 @@
                     <div class="col-12 col-sm-6 col-lg-4 mp-animate-in">
                         <div class="mp-card h-100">
                             <div class="mp-card-img-wrapper">
-                                <img src="{{ asset('images/' ~ filtered_advert.imageFileName) }}" alt="{{ filtered_advert.title }}">
+                                <img src="{{ asset('images/' ~ filtered_advert.imageFileName) }}" alt="{{ filtered_advert.title }}" loading="lazy" decoding="async">
                                 {% if is_granted('ROLE_USER') %}
                                     <a href="{{ path('favorite_advert', {'id': filtered_advert.id}) }}" class="mp-favorite-btn {% if filtered_advert.isFavoritedBy(app.user) %}active{% endif %}">
                                         <i class="fa-{% if filtered_advert.isFavoritedBy(app.user) %}solid{% else %}regular{% endif %} fa-heart"></i>
