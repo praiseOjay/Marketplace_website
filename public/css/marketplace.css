@@ -147,36 +147,84 @@ a:hover {
     font-size: 0.9rem;
 }
 
-/* Navbar search */
-.mp-navbar-search {
-    position: relative;
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
+/* Navbar search capsule */
+.mp-search-capsule {
+    max-width: 480px;
+    width: 100%;
 }
 
-.mp-navbar-search .form-control,
-.mp-navbar-search .form-select {
-    background: var(--mp-bg-glass);
+.mp-search-input-group {
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--mp-border-glass);
-    color: var(--mp-text-primary);
-    font-size: 0.85rem;
-    border-radius: var(--mp-radius-sm);
-    padding: 0.4rem 0.75rem;
+    border-radius: 50px !important;
+    padding: 0.2rem 0.25rem 0.2rem 0.5rem;
     transition: all var(--mp-transition-fast);
+    backdrop-filter: blur(10px);
 }
 
-.mp-navbar-search .form-control:focus,
-.mp-navbar-search .form-select:focus {
+.mp-search-input-group:focus-within {
     border-color: var(--mp-accent);
     box-shadow: 0 0 0 3px var(--mp-accent-soft);
-    background: var(--mp-bg-glass-hover);
-    color: var(--mp-text-primary);
-    outline: none;
+    background: rgba(255, 255, 255, 0.08);
 }
 
-.mp-navbar-search .form-select option {
+.mp-search-input-group .form-control {
+    font-size: 0.875rem;
+}
+
+.mp-category-select {
+    font-size: 0.825rem;
+    border-left: 1px solid var(--mp-border-glass) !important;
+    border-radius: 0 !important;
+    max-width: 140px;
+    padding-left: 0.5rem;
+    cursor: pointer;
+}
+
+.mp-category-select option {
     background: var(--mp-bg-secondary);
+    color: var(--mp-text-primary);
+}
+
+.mp-search-submit-btn {
+    background: var(--mp-accent);
+    color: #fff;
+    border-radius: 50px !important;
+    padding: 0.4rem 1.1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all var(--mp-transition-fast);
+    border: none;
+}
+
+.mp-search-submit-btn:hover {
+    background: var(--mp-accent-hover);
+    color: #fff;
+    transform: scale(1.02);
+}
+
+/* User Dropdown Menu */
+.mp-dropdown-menu {
+    background: rgba(17, 24, 39, 0.95) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--mp-border-glass) !important;
+    border-radius: var(--mp-radius-md) !important;
+    margin-top: 0.5rem;
+}
+
+.mp-dropdown-menu .dropdown-item {
+    color: var(--mp-text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all var(--mp-transition-fast);
+    border-radius: var(--mp-radius-sm);
+    margin: 0 0.25rem;
+    width: calc(100% - 0.5rem);
+}
+
+.mp-dropdown-menu .dropdown-item:hover {
+    background: var(--mp-bg-glass-hover);
     color: var(--mp-text-primary);
 }
 

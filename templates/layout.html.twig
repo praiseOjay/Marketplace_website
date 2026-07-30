@@ -5,7 +5,7 @@
     <nav class="mp-navbar navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="{{ path('home') }}">
-                <i class="fa-solid fa-store me-2"></i>Marketplace
+                <i class="fa-solid fa-bag-shopping me-2"></i>Marketplace
             </a>
 
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mpNavbar" aria-controls="mpNavbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -13,59 +13,95 @@
             </button>
 
             <div class="collapse navbar-collapse" id="mpNavbar">
-                {# Search form #}
-                <div class="mx-auto mp-navbar-search">
-                    {{ form_start(search_form, {'attr': {'class': 'd-flex gap-2 align-items-center'}}) }}
-                    {{ form_widget(search_form.title, {'attr': {'class': 'form-control', 'placeholder': 'Search adverts...'}}) }}
-                    {{ form_widget(search_form.category, {'attr': {'class': 'form-select'}}) }}
-                    <button type="submit" class="mp-btn mp-btn-primary mp-btn-sm">
-                        <i class="fa-solid fa-search"></i>
-                    </button>
+                {# Integrated Search Capsule #}
+                <div class="mx-auto my-2 my-lg-0 mp-search-capsule">
+                    {{ form_start(search_form, {'attr': {'class': 'd-flex align-items-center w-100'}}) }}
+                        <div class="input-group mp-search-input-group">
+                            <span class="input-group-text border-0 bg-transparent ps-3 text-muted">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </span>
+                            {{ form_widget(search_form.title, {'attr': {'class': 'form-control border-0 bg-transparent text-light shadow-none ps-1', 'placeholder': 'Search adverts...'}}) }}
+                            {{ form_widget(search_form.category, {'attr': {'class': 'form-select border-0 bg-transparent text-light shadow-none mp-category-select'}}) }}
+                            <button type="submit" class="btn mp-search-submit-btn">
+                                Search
+                            </button>
+                        </div>
                     {{ form_end(search_form) }}
                 </div>
 
                 {# Nav links #}
-                <ul class="navbar-nav ms-auto align-items-center gap-1">
+                <ul class="navbar-nav ms-auto align-items-center gap-2">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('home') }}"><i class="fa-solid fa-house"></i> Home</a>
+                        <a class="nav-link {% if app.request.attributes.get('_route') == 'home' %}active{% endif %}" href="{{ path('home') }}">
+                            <i class="fa-solid fa-house"></i> Home
+                        </a>
                     </li>
-
-                    {% if is_granted('ROLE_MODERATOR') %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('admin') }}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-                        </li>
-                    {% endif %}
 
                     {% if is_granted('ROLE_USER') %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('new_advert') }}"><i class="fa-solid fa-plus"></i> New Advert</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('user_advert') }}"><i class="fa-solid fa-folder-open"></i> My Adverts</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('user_favorites') }}"><i class="fa-solid fa-heart" style="color: var(--mp-danger);"></i> Saved</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('user_inbox') }}"><i class="fa-solid fa-comments"></i> Messages</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('show_profile') }}"><i class="fa-solid fa-user"></i> Profile</a>
-                        </li>
-                        <li class="nav-item ms-2">
-                            <a href="{{ path('show_profile') }}">
-                                <img src="{{ asset('images/' ~ app.user.imageFileName) }}" alt="Avatar" class="mp-avatar">
+                            <a class="nav-link {% if app.request.attributes.get('_route') == 'user_favorites' %}active{% endif %}" href="{{ path('user_favorites') }}">
+                                <i class="fa-solid fa-heart" style="color: var(--mp-danger);"></i> Saved
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_logout') }}"><i class="fa-solid fa-right-from-bracket"></i></a>
+                            <a class="nav-link {% if app.request.attributes.get('_route') == 'user_inbox' or app.request.attributes.get('_route') == 'message_thread' %}active{% endif %}" href="{{ path('user_inbox') }}">
+                                <i class="fa-solid fa-comments"></i> Messages
+                            </a>
+                        </li>
+
+                        {# Primary CTA Button #}
+                        <li class="nav-item ms-lg-1 me-lg-2">
+                            <a class="mp-btn mp-btn-primary mp-btn-sm" href="{{ path('new_advert') }}">
+                                <i class="fa-solid fa-plus me-1"></i> Post Advert
+                            </a>
+                        </li>
+
+                        {# User Avatar Dropdown #}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 py-0 border-0" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="{{ asset('images/' ~ app.user.imageFileName) }}" alt="{{ app.user.username }}" class="mp-avatar">
+                                <span class="d-none d-lg-inline-block fw-medium" style="color: var(--mp-text-primary); font-size: 0.875rem;">{{ app.user.username }}</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end mp-dropdown-menu shadow-lg border-0" aria-labelledby="userDropdown">
+                                <li class="px-3 py-2 border-bottom border-secondary border-opacity-25">
+                                    <div class="fw-bold" style="color: var(--mp-text-primary);">{{ app.user.username }}</div>
+                                    <small class="text-muted">{{ app.user.email }}</small>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2" href="{{ path('show_profile') }}">
+                                        <i class="fa-solid fa-user me-2 text-primary"></i> My Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2" href="{{ path('user_advert') }}">
+                                        <i class="fa-solid fa-folder-open me-2 text-info"></i> My Adverts
+                                    </a>
+                                </li>
+                                {% if is_granted('ROLE_MODERATOR') %}
+                                    <li>
+                                        <a class="dropdown-item py-2" href="{{ path('admin') }}">
+                                            <i class="fa-solid fa-gauge me-2 text-warning"></i> Admin Dashboard
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider my-1"></li>
+                                <li>
+                                    <a class="dropdown-item py-2 text-danger" href="{{ path('app_logout') }}">
+                                        <i class="fa-solid fa-right-from-bracket me-2"></i> Log Out
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="mp-btn mp-btn-outline mp-btn-sm" href="{{ path('app_login') }}"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+                            <a class="mp-btn mp-btn-outline mp-btn-sm" href="{{ path('app_login') }}">
+                                <i class="fa-solid fa-right-to-bracket"></i> Login
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="mp-btn mp-btn-primary mp-btn-sm" href="{{ path('app_register') }}"><i class="fa-solid fa-user-plus"></i> Register</a>
+                            <a class="mp-btn mp-btn-primary mp-btn-sm" href="{{ path('app_register') }}">
+                                <i class="fa-solid fa-user-plus"></i> Register
+                            </a>
                         </li>
                     {% endif %}
                 </ul>
