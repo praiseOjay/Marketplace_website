@@ -19,7 +19,22 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $categories = ['Electronics', 'Vehicles', 'Real Estate', 'Fashion', 'Home & Garden'];
+        $categories = [
+            'Electronics',
+            'Vehicles',
+            'Real Estate',
+            'Fashion',
+            'Home & Garden',
+            'Jobs & Services',
+            'Sports & Leisure',
+            'Books & Media',
+            'Toys & Hobbies',
+            'Health & Beauty',
+            'Pets & Animals',
+            'Baby & Kids',
+            'Art & Collectibles',
+            'Business & Industrial',
+        ];
         $categoryEntities = [];
 
         foreach ($categories as $catName) {
