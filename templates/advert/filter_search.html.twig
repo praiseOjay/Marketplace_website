@@ -1,37 +1,81 @@
 {% extends 'layout.html.twig' %}
 
+{% block title %}Search Results — Marketplace{% endblock %}
+
 {% block content %}
-    <div class="table-group-divider mb-5"></div>
-    <div class="container-fluid text-center">
-        <div class="row row-cols-1 row-cols-2 row-cols-3 row-cols-4 g-5 align-items-center justify-content-center">
-            {# check if pagination is empty #}
-            {% if pagination is empty %}
-                {# display error message if pagination is empty #}
-                <h1>Sorry, Advert does not exist</h1>
-            {% else %}
-            {# display filtered adverts if pagination is not empty #}
-            {% for filtered_advert in pagination %}
-                <div class="col-auto">
-                    <div class="card mb-3" style="max-width: 20rem;">
-                        <img src="{{asset('images/' ~ filtered_advert.imageFileName)}}" alt="{{ filtered_advert.imageFileName }}" class="img-fluid rounded-start rounded-end">
-                        <div class="card-body">
-                            <h5 class="card-title"><a href="{{ path('show_advert', {'id': filtered_advert.id}) }}">{{ filtered_advert.Title }}</a></h5>
-                            <p class="card-text">From: {{ advert.getUser().getUsername() }}</p>
-                            <p class="card-text">£{{ filtered_advert.Price }}</p>
-                            <p class="card-text"><small class="text-body-secondary">{{ filtered_advert.Timestamp | date('d/m/y H:i') }}</small></p>
+    <div class="container mp-animate-fade">
+        <div class="mp-section-header">
+            <h2>Search Results</h2>
+            <p>Filtered adverts matching your search criteria</p>
+        </div>
+
+        {% if pagination is empty %}
+            <div class="mp-empty-state">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <h3>No matching adverts found</h3>
+                <p>Try searching for something else or browse all categories.</p>
+                <a href="{{ path('home') }}" class="mp-btn mp-btn-outline mt-3">
+                    <i class="fa-solid fa-arrow-left"></i> Back to All Adverts
+                </a>
+            </div>
+        {% else %}
+            <div class="row g-4 mp-stagger">
+                {% for filtered_advert in pagination %}
+                    <div class="col-12 col-sm-6 col-lg-4 mp-animate-in">
+                        <div class="mp-card h-100">
+                            <div class="mp-card-img-wrapper">
+                                <img src="{{ asset('images/' ~ filtered_advert.imageFileName) }}" alt="{{ filtered_advert.title }}">
+                                {% if is_granted('ROLE_USER') %}
+                                    <a href="{{ path('favorite_advert', {'id': filtered_advert.id}) }}" class="mp-favorite-btn {% if filtered_advert.isFavoritedBy(app.user) %}active{% endif %}">
+                                        <i class="fa-{% if filtered_advert.isFavoritedBy(app.user) %}solid{% else %}regular{% endif %} fa-heart"></i>
+                                    </a>
+                                {% endif %}
+                                <div class="mp-card-img-overlay">
+                                    <span class="mp-price">£{{ filtered_advert.price | number_format(0) }}</span>
+                                </div>
+                            </div>
+
+                            <div class="mp-card-body">
+                                <h5 class="mp-card-title">
+                                    <a href="{{ path('show_advert', {'slug': filtered_advert.slug}) }}">{{ filtered_advert.title }}</a>
+                                </h5>
+                                <div class="d-flex flex-wrap gap-2 mb-2">
+                                    {% if filtered_advert.category %}
+                                        <span class="mp-badge mp-badge-category">
+                                            <i class="fa-solid fa-tag"></i> {{ filtered_advert.category.categoryName }}
+                                        </span>
+                                    {% endif %}
+                                    {% set statusClass = {
+                                        'published': 'published',
+                                        'pending_review': 'pending',
+                                        'draft': 'draft',
+                                        'sold': 'sold',
+                                        'rejected': 'rejected'
+                                    } %}
+                                    <span class="mp-badge mp-badge-{{ statusClass[filtered_advert.status.value] | default('draft') }}">
+                                        {{ filtered_advert.status.label }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="mp-card-footer">
+                                <div class="mp-card-meta">
+                                    <i class="fa-solid fa-user-circle"></i>
+                                    {{ filtered_advert.getUser().getUsername() }}
+                                </div>
+                                <div class="mp-card-meta">
+                                    <i class="fa-regular fa-clock"></i>
+                                    {{ filtered_advert.timestamp | date('d M Y') }}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-            {% endif %}
-        </div>
+                {% endfor %}
+            </div>
+
+            <nav class="mt-4 d-flex justify-content-center" aria-label="Advert pagination">
+                {{ knp_pagination_render(pagination, 'pagination/twitter_bootstrap_v4_pagination.html.twig') }}
+            </nav>
+        {% endif %}
     </div>
-
-    <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
-            {# display pagination if pagination is not empty #}
-            {{ knp_pagination_render(pagination,'pagination/twitter_bootstrap_v4_pagination.html.twig') }}
-        </ul>
-    </nav>
 {% endblock %}
-

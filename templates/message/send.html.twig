@@ -1,0 +1,33 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Contact Seller — Marketplace{% endblock %}
+
+{% block content %}
+    <div class="container mp-animate-fade">
+        <div class="mp-form-card mp-animate-in">
+            <h2><i class="fa-solid fa-paper-plane me-2" style="color: var(--mp-accent);"></i>Message Seller</h2>
+            <p class="mp-form-subtitle">Send an inquiry to <strong>{{ recipient.username }}</strong> regarding <strong>{{ advert.title }}</strong></p>
+
+            <div class="p-3 mb-4 rounded d-flex align-items-center gap-3" style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--mp-border-glass);">
+                <img src="{{ asset('images/' ~ advert.imageFileName) }}" alt="{{ advert.title }}" style="width: 64px; height: 48px; object-fit: cover; border-radius: var(--mp-radius-sm);">
+                <div>
+                    <h6 class="mb-0" style="font-weight: 600; color: var(--mp-text-primary);">{{ advert.title }}</h6>
+                    <span class="mp-price mp-price-sm">£{{ advert.price | number_format(0) }}</span>
+                </div>
+            </div>
+
+            {{ form_start(form) }}
+                <div class="mp-form-group">
+                    {{ form_label(form.content, 'Your Message', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.content, {'attr': {'class': 'form-control', 'rows': 4, 'placeholder': 'Hi ' ~ recipient.username ~ ', is this item still available?'}}) }}
+                    {{ form_errors(form.content) }}
+                </div>
+
+                <div class="mt-4 d-grid gap-2">
+                    {{ form_widget(form.send, {'attr': {'class': 'mp-btn mp-btn-primary w-100 justify-content-center'}, 'label': 'Send Inquiry'}) }}
+                    <a href="{{ path('show_advert', {'slug': advert.slug}) }}" class="mp-btn mp-btn-outline w-100 justify-content-center mt-1">Cancel</a>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

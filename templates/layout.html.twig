@@ -1,50 +1,87 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <header class="p-3 mb-3 border-bottom">
+    {# ======== NAVBAR ======== #}
+    <nav class="mp-navbar navbar navbar-expand-lg">
         <div class="container">
-            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                <div class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
-                    {% block layout_title %}
-                        {# render title #}
-                    <h1 class="display-4">Marketplace</h1>
-                    {% endblock %}
-                </div>
+            <a class="navbar-brand" href="{{ path('home') }}">
+                <i class="fa-solid fa-store me-2"></i>Marketplace
+            </a>
 
-                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                </ul>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mpNavbar" aria-controls="mpNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars" style="color: var(--mp-text-secondary);"></i>
+            </button>
 
-                <div class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
-                    {# render search form #}
-                    {{ form_start(search_form) }}
-                    {{ form_row(search_form.title) }}
-                    {{ form_row(search_form.category) }}
-                    {{ form_row(search_form.search) }}
+            <div class="collapse navbar-collapse" id="mpNavbar">
+                {# Search form #}
+                <div class="mx-auto mp-navbar-search">
+                    {{ form_start(search_form, {'attr': {'class': 'd-flex gap-2 align-items-center'}}) }}
+                    {{ form_widget(search_form.title, {'attr': {'class': 'form-control', 'placeholder': 'Search adverts...'}}) }}
+                    {{ form_widget(search_form.category, {'attr': {'class': 'form-select'}}) }}
+                    <button type="submit" class="mp-btn mp-btn-primary mp-btn-sm">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
                     {{ form_end(search_form) }}
                 </div>
-                <div class="ms-auto">
-                    <p class="d-inline-flex gap-3">
-                        <a  class="btn btn-primary btn-sm" href="{{ path('home') }}">Home</a>
-                        {% if is_granted('ROLE_MODERATOR') %}
-                            {# if user has a moderator role, render dashboard #}
-                            <a  class="btn btn-primary btn-sm" href="{{ path('admin') }}">Dashboard</a>
-                        {% endif %}
-                        {% if is_granted('ROLE_USER') %}
-                            {# if user has a user role, render other links #}
-                            <a class="btn btn-primary btn-sm" href="{{ path('new_advert') }}">Create Advert</a>
-                            <a class="btn btn-primary btn-sm" href="{{ path('user_advert') }}">My Adverts</a>
-                            <a class="btn btn-primary btn-sm" href="{{ path('show_profile') }}">My Profile</a>
-                            <a  class="btn btn-primary btn-sm" href="{{ path('app_logout') }}">Logout</a>
-                            <img src="{{ asset('images/' ~ app.user.imageFileName) }}" alt="{{ app.user.imageFileName }}" width="52" height="52" class="rounded-circle">
-                        {% else %}
-                            <img src="{{ asset('images/default_image.png') }}" alt=" Default profile picture" width="52" height="52" class="rounded-circle">
-                            <a  class="btn btn-primary btn-sm" href="{{ path('app_login') }}">Login</a>
-                            <a  class="btn btn-primary  btn-sm" href="{{ path('app_register') }}">Register</a>
-                        {% endif %}
-                    </p>
-                </div>
+
+                {# Nav links #}
+                <ul class="navbar-nav ms-auto align-items-center gap-1">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('home') }}"><i class="fa-solid fa-house"></i> Home</a>
+                    </li>
+
+                    {% if is_granted('ROLE_MODERATOR') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('admin') }}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                        </li>
+                    {% endif %}
+
+                    {% if is_granted('ROLE_USER') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('new_advert') }}"><i class="fa-solid fa-plus"></i> New Advert</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('user_advert') }}"><i class="fa-solid fa-folder-open"></i> My Adverts</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('user_favorites') }}"><i class="fa-solid fa-heart" style="color: var(--mp-danger);"></i> Saved</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('user_inbox') }}"><i class="fa-solid fa-comments"></i> Messages</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('show_profile') }}"><i class="fa-solid fa-user"></i> Profile</a>
+                        </li>
+                        <li class="nav-item ms-2">
+                            <a href="{{ path('show_profile') }}">
+                                <img src="{{ asset('images/' ~ app.user.imageFileName) }}" alt="Avatar" class="mp-avatar">
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_logout') }}"><i class="fa-solid fa-right-from-bracket"></i></a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="mp-btn mp-btn-outline mp-btn-sm" href="{{ path('app_login') }}"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="mp-btn mp-btn-primary mp-btn-sm" href="{{ path('app_register') }}"><i class="fa-solid fa-user-plus"></i> Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
-    </header>
-    {% block content %}{% endblock %}
+    </nav>
+
+    {# ======== MAIN CONTENT ======== #}
+    <main class="mp-main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    {# ======== FOOTER ======== #}
+    <footer class="mp-footer">
+        <div class="container">
+            <p class="mp-footer-text">© {{ 'now' | date('Y') }} Marketplace — Built with Symfony. All rights reserved.</p>
+        </div>
+    </footer>
 {% endblock %}

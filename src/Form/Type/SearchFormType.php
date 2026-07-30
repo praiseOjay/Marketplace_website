@@ -29,7 +29,6 @@ class SearchFormType extends AbstractType
                 'placeholder_attr' => ['id' => '0', 'value' => '0']
 
             ])
-            ->add('search', SubmitType::class)
         ;
     }
     public function configureOptions(OptionsResolver $resolver): void

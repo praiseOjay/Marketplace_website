@@ -1,24 +1,108 @@
 {% extends 'layout.html.twig' %}
 
+{% block title %}My Profile — Marketplace{% endblock %}
+
 {% block content %}
+    <div class="container mp-animate-fade">
+        <div class="row g-4 justify-content-center">
+            {# User Info Card #}
+            <div class="col-lg-5">
+                <div class="mp-form-card mp-animate-in h-100" style="max-width: 100%;">
+                    <div class="text-center mb-4">
+                        <img src="{{ asset('images/' ~ app.user.imageFileName) }}" alt="{{ app.user.username }}" class="rounded-circle mb-3" style="width: 96px; height: 96px; object-fit: cover; border: 3px solid var(--mp-accent);">
+                        <h2>{{ user.username }}</h2>
+                    </div>
 
-    <div class="table-group-divider mb-5"></div>
+                    <div class="mp-detail-info-row">
+                        <i class="fa-solid fa-envelope"></i>
+                        <div>
+                            <div class="label">Email Address</div>
+                            <div class="value">{{ user.email }}</div>
+                        </div>
+                    </div>
 
-    <div class="container-fluid text-center">
-        <div class = "row g-3 align-items-center justify-content-center">
-            <div class="col-auto">
-                <div class = "card mb-3" style="max-width: 50rem;">
-                    {# render user's info #}
-                    <img src="{{asset('images/' ~ app.user.imageFileName)  }}" alt="{{ app.user.imageFileName }}" class="img-fluid rounded-start rounded-end">
-                    <div class="card-body">
-                        <h2 class="card-title">Username: {{ user.Username }}</h2>
-                        <p class="card-text">Email: {{ user.Email }}</p>
-                        <p class="card-text"><a  class="btn btn-primary btn-sm" href="{{ path('edit_profile') }}">Edit</a></p>
+                    <div class="mp-detail-info-row">
+                        <i class="fa-solid fa-box"></i>
+                        <div>
+                            <div class="label">Total Listed Adverts</div>
+                            <div class="value">{{ user.adverts | length }}</div>
+                        </div>
+                    </div>
+
+                    <a href="{{ path('user_favorites') }}" class="mp-detail-info-row text-decoration-none" style="display: flex;">
+                        <i class="fa-solid fa-heart" style="color: var(--mp-danger);"></i>
+                        <div class="d-flex justify-content-between align-items-center w-100 me-2">
+                            <div class="label">Saved Adverts</div>
+                            <div class="value me-2">{{ user.favoriteAdverts | length }}</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-muted" style="font-size: 0.75rem;"></i>
+                    </a>
+
+                    <div class="mt-4 d-grid gap-2">
+                        <a href="{{ path('edit_profile') }}" class="mp-btn mp-btn-primary w-100 justify-content-center">
+                            <i class="fa-solid fa-user-pen me-2"></i>Edit Profile & Password
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {# User Metrics Grid Card #}
+            <div class="col-lg-7">
+                <div class="mp-form-card mp-animate-in h-100" style="max-width: 100%;">
+                    <h2><i class="fa-solid fa-chart-line me-2" style="color: var(--mp-accent);"></i>Account Metrics</h2>
+                    <p class="mp-form-subtitle text-start mb-4">Overview of your marketplace sales, purchases, and earnings</p>
+
+                    <div class="row g-3">
+                        {# Total Earned #}
+                        <div class="col-6">
+                            <div class="p-3 rounded text-center h-100" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25);">
+                                <div style="color: var(--mp-success); font-size: 1.75rem; font-weight: 700; font-family: var(--mp-font-heading);">
+                                    £{{ user.totalEarnings | number_format(2) }}
+                                </div>
+                                <div style="color: var(--mp-text-secondary); font-size: 0.8rem; font-weight: 500;" class="mt-1">
+                                    <i class="fa-solid fa-sack-dollar me-1"></i> Total Earned
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Items Sold #}
+                        <div class="col-6">
+                            <div class="p-3 rounded text-center h-100" style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.25);">
+                                <div style="color: var(--mp-accent-hover); font-size: 1.75rem; font-weight: 700; font-family: var(--mp-font-heading);">
+                                    {{ user.soldAdvertsCount }}
+                                </div>
+                                <div style="color: var(--mp-text-secondary); font-size: 0.8rem; font-weight: 500;" class="mt-1">
+                                    <i class="fa-solid fa-tag me-1"></i> Items Sold
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Items Bought #}
+                        <div class="col-6">
+                            <div class="p-3 rounded text-center h-100" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25);">
+                                <div style="color: var(--mp-info); font-size: 1.75rem; font-weight: 700; font-family: var(--mp-font-heading);">
+                                    {{ user.boughtAdvertsCount }}
+                                </div>
+                                <div style="color: var(--mp-text-secondary); font-size: 0.8rem; font-weight: 500;" class="mt-1">
+                                    <i class="fa-solid fa-cart-shopping me-1"></i> Items Bought
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Active Listings #}
+                        <div class="col-6">
+                            <div class="p-3 rounded text-center h-100" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25);">
+                                <div style="color: var(--mp-warning); font-size: 1.75rem; font-weight: 700; font-family: var(--mp-font-heading);">
+                                    {{ user.activeAdvertsCount }}
+                                </div>
+                                <div style="color: var(--mp-text-secondary); font-size: 0.8rem; font-weight: 500;" class="mt-1">
+                                    <i class="fa-solid fa-box-open me-1"></i> Active Listings
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 {% endblock %}
-

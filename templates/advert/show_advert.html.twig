@@ -1,25 +1,105 @@
 {% extends 'layout.html.twig' %}
 
-{% block content %}
-    <div class="table-group-divider mb-5"></div>
+{% block title %}{{ advert.title }} — Marketplace{% endblock %}
 
-    <div class="container-fluid text-center">
-        <div class = "row g-3 align-items-center justify-content-center">
-            <div class="col-auto">
-                <div class = "card mb-3" style="max-width: 50rem;">
-                    {# render advert information #}
-                    <img src="{{asset('images/' ~ advert.imageFileName)  }}" alt="{{ advert.imageFileName }}" class="img-fluid rounded-start rounded-end">
-                    <div class="card-body">
-                        <h2 class="card-title">{{ advert.Title }}</h2>
-                        <p class="card-text">{{ advert.description }}</p>
-                        <p class="card-text">From: {{ advert.getUser().getUsername() }}</p>
-                        <p class="card-text">£{{ advert.Price }}</p>
-                        <p class="card-text">{{ advert.Location }}</p>
-                        <p class="card-text"><small class="text-body-secondary">{{ advert.Timestamp | date('d/m/y H:i') }}</small></p>
+{% block content %}
+    <div class="container mp-animate-fade">
+        <div class="row g-4">
+            {# Left: Image hero #}
+            <div class="col-lg-7">
+                <div class="mp-detail-hero">
+                    <img src="{{ asset('images/' ~ advert.imageFileName) }}" alt="{{ advert.title }}">
+                    <div class="mp-detail-hero-overlay">
+                        <div class="d-flex flex-wrap gap-2 mb-2">
+                            {% if advert.category %}
+                                <span class="mp-badge mp-badge-category">
+                                    <i class="fa-solid fa-tag"></i> {{ advert.category.categoryName }}
+                                </span>
+                            {% endif %}
+                            {% set statusClass = {
+                                'published': 'published',
+                                'pending_review': 'pending',
+                                'draft': 'draft',
+                                'sold': 'sold',
+                                'rejected': 'rejected'
+                            } %}
+                            <span class="mp-badge mp-badge-{{ statusClass[advert.status.value] | default('draft') }}">
+                                {{ advert.status.label }}
+                            </span>
+                        </div>
+                        <h1 style="font-size: 1.75rem; font-weight: 700; color: #fff; margin: 0;">{{ advert.title }}</h1>
+                    </div>
+                    {# Favorite button #}
+                    {% if is_granted('ROLE_USER') %}
+                        <a href="{{ path('favorite_advert', {'id': advert.id}) }}" class="mp-favorite-btn {% if advert.isFavoritedBy(app.user) %}active{% endif %}">
+                            <i class="fa-{% if advert.isFavoritedBy(app.user) %}solid{% else %}regular{% endif %} fa-heart"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {# Right: Info panel #}
+            <div class="col-lg-5">
+                <div class="mp-detail-info mp-animate-in">
+                    <div class="mb-3">
+                        <span class="mp-price" style="font-size: 2rem;">£{{ advert.price | number_format(0) }}</span>
+                    </div>
+
+                    <div class="mp-detail-info-row">
+                        <i class="fa-solid fa-align-left"></i>
+                        <div>
+                            <div class="label">Description</div>
+                            <div class="value">{{ advert.description }}</div>
+                        </div>
+                    </div>
+
+                    <div class="mp-detail-info-row">
+                        <i class="fa-solid fa-user"></i>
+                        <div>
+                            <span class="label">Seller</span>
+                            <span class="value">{{ advert.getUser().getUsername() }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mp-detail-info-row">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <div>
+                            <span class="label">Location</span>
+                            <span class="value">{{ advert.location }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mp-detail-info-row">
+                        <i class="fa-regular fa-calendar"></i>
+                        <div>
+                            <span class="label">Posted</span>
+                            <span class="value">{{ advert.timestamp | date('d M Y, H:i') }}</span>
+                        </div>
+                    </div>
+
+                    {# Action buttons #}
+                    <div class="mt-3 d-flex flex-wrap gap-2">
+                        <a href="{{ path('home') }}" class="mp-btn mp-btn-outline">
+                            <i class="fa-solid fa-arrow-left"></i> Back
+                        </a>
+                        {% if is_granted('ROLE_USER') %}
+                            {% if app.user == advert.getUser() %}
+                                <a href="{{ path('edit_advert', {'id': advert.id}) }}" class="mp-btn mp-btn-primary">
+                                    <i class="fa-solid fa-pen"></i> Edit
+                                </a>
+                            {% else %}
+                                <a href="{{ path('send_message', {'advertId': advert.id}) }}" class="mp-btn mp-btn-primary">
+                                    <i class="fa-solid fa-paper-plane me-1"></i> Message Seller
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{{ path('app_login') }}" class="mp-btn mp-btn-primary">
+                                <i class="fa-solid fa-right-to-bracket me-1"></i> Login to Message Seller
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 {% endblock %}
-

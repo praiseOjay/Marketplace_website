@@ -1,26 +1,54 @@
 {% extends 'layout.html.twig' %}
 
+{% block title %}Create New Advert — Marketplace{% endblock %}
+
 {% block content %}
-    <div class="table-group-divider mb-5"></div>
-    <div class="container-fluid text-center">
-        <div class="row">
-            <div class="col">
-                <h1 class="display-4">New Advert</h1>
-            </div>
-        </div>
-        <div class="row g-5 align-items-center justify-content-center">
-            <div class="col-auto">
-                {# render the form #}
-                {{ form_start(form) }}
-                {{ form_row(form.title) }}
-                {{ form_row(form.description) }}
-                {{ form_row(form.category) }}
-                {{ form_row(form.price) }}
-                {{ form_row(form.location) }}
-                {{ form_row(form.imageFile) }}
-                {{ form_row(form.save) }}
-                {{ form_end(form) }}
-            </div>
+    <div class="container mp-animate-fade">
+        <div class="mp-form-card mp-animate-in">
+            <h2><i class="fa-solid fa-plus-circle me-2" style="color: var(--mp-accent);"></i>Create Advert</h2>
+            <p class="mp-form-subtitle">Fill in the details to list your item on the marketplace</p>
+
+            {{ form_start(form) }}
+                <div class="mp-form-group">
+                    {{ form_label(form.title, 'Title', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'e.g. iPhone 15 Pro Max 256GB'}}) }}
+                    {{ form_errors(form.title) }}
+                </div>
+
+                <div class="mp-form-group">
+                    {{ form_label(form.category, 'Category', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.category, {'attr': {'class': 'form-select'}}) }}
+                    {{ form_errors(form.category) }}
+                </div>
+
+                <div class="mp-form-group">
+                    {{ form_label(form.price, 'Price (£)', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.price, {'attr': {'class': 'form-control', 'placeholder': '0.00'}}) }}
+                    {{ form_errors(form.price) }}
+                </div>
+
+                <div class="mp-form-group">
+                    {{ form_label(form.location, 'Location', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.location, {'attr': {'class': 'form-control', 'placeholder': 'e.g. London, UK'}}) }}
+                    {{ form_errors(form.location) }}
+                </div>
+
+                <div class="mp-form-group">
+                    {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4, 'placeholder': 'Provide details about your item...'}}) }}
+                    {{ form_errors(form.description) }}
+                </div>
+
+                <div class="mp-form-group">
+                    {{ form_label(form.imageFile, 'Product Image', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.imageFile, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.imageFile) }}
+                </div>
+
+                <div class="mt-4 d-grid gap-2">
+                    {{ form_widget(form.save, {'attr': {'class': 'mp-btn mp-btn-primary w-100 justify-content-center'}, 'label': 'Publish Advert'}) }}
+                </div>
+            {{ form_end(form) }}
         </div>
     </div>
 {% endblock %}

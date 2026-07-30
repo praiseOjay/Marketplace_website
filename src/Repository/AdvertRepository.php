@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Advert;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -22,61 +21,51 @@ class AdvertRepository extends ServiceEntityRepository
         parent::__construct($registry, Advert::class);
     }
 
-    //get all published adverts with order by id
+    /**
+     * Get all published adverts with category and user eagerly joined (fixes N+1 query problem)
+     */
     public function allAdvertsQuery()
     {
         return $this->createQueryBuilder('a')
+            ->addSelect('c', 'u')
+            ->leftJoin('a.category', 'c')
+            ->leftJoin('a.username', 'u')
             ->where('a.isPublished = true')
-            ->orderBy('a.id', 'ASC')
+            ->orderBy('a.id', 'DESC')
             ->getQuery();
     }
 
-    //get all published adverts with order by id where title contains $title
+    /**
+     * Get search query by title with eager joins
+     */
     public function titleSearchQuery($title)
     {
         return $this->createQueryBuilder('a')
+            ->addSelect('c', 'u')
+            ->leftJoin('a.category', 'c')
+            ->leftJoin('a.username', 'u')
             ->where('a.isPublished = true')
             ->andWhere('a.title LIKE :title')
             ->setParameter('title', '%'.$title.'%')
-            ->orderBy('a.id', 'ASC')
+            ->orderBy('a.id', 'DESC')
             ->getQuery();
     }
 
-    //get all published adverts with order by id where title contains $title and category = $category
+    /**
+     * Get filtered search query with eager joins
+     */
     public function filteredSearchQuery($title, $category)
     {
         return $this->createQueryBuilder('a')
+            ->addSelect('c', 'u')
+            ->leftJoin('a.category', 'c')
+            ->leftJoin('a.username', 'u')
             ->where('a.isPublished = true')
             ->andWhere('a.title LIKE :title')
             ->andWhere('a.category = :category')
             ->setParameter('title', '%'.$title.'%')
             ->setParameter('category', $category)
-            ->orderBy('a.id', 'ASC')
+            ->orderBy('a.id', 'DESC')
             ->getQuery();
     }
-
-//    /**
-//     * @return Advert[] Returns an array of Advert objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('a.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Advert
-//    {
-//        return $this->createQueryBuilder('a')
-//            ->andWhere('a.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

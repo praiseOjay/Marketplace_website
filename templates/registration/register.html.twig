@@ -1,70 +1,53 @@
 {% extends 'layout.html.twig' %}
 
+{% block title %}Create Account — Marketplace{% endblock %}
+
 {% block content %}
+    <div class="container mp-animate-fade">
+        <div class="mp-form-card mp-animate-in">
+            <h2><i class="fa-solid fa-user-plus me-2" style="color: var(--mp-accent);"></i>Join Marketplace</h2>
+            <p class="mp-form-subtitle">Create an account to start posting and saving adverts</p>
 
-    <div class="table-group-divider mb-5"></div>
-
-    {% block register_title %}
-        <div class="container-fluid">
-            <div class="row row-cols-auto">
-                <div class="col-auto">
-                    {# register title #}
-                <h1 class="display-4">Register</h1>
+            {% if form_errors(registrationForm) %}
+                <div class="alert alert-danger border-0 mb-4" style="background: rgba(239, 68, 68, 0.15); color: #f87171; font-size: 0.85rem; border-radius: var(--mp-radius-sm);">
+                    {{ form_errors(registrationForm) }}
                 </div>
-            </div>
-        </div>
-    {% endblock %}
+            {% endif %}
 
-    {# render errors #}
-    {{ form_errors(registrationForm) }}
-    {% block register_form %}
-<div class="container-fluid text-center">
-    {# render registration form #}
             {{ form_start(registrationForm) }}
-        <!-- Username -->
-        <div class="row row-cols-auto g-3 justify-content-center">
-            <div class="col-auto">
-                {{ form_label(registrationForm.username, {attr: {'class': 'col-form-label'}}, {label: 'Username'}) }}
-                {{ form_widget(registrationForm.username, {attr: {'class': 'form-control-sm','placeholder': 'Register your username'}}) }}
-            </div>
-        </div>
+                <div class="mp-form-group">
+                    {{ form_label(registrationForm.username, 'Username', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.username, {attr: {'class': 'form-control', 'placeholder': 'Choose a unique username'}}) }}
+                    {{ form_errors(registrationForm.username) }}
+                </div>
 
-        <!-- Email -->
-        <div class="row row-cols-auto g-3 justify-content-center">
-            <div class="col-auto">
-                {{ form_label(registrationForm.email, {attr: {'class': 'col-form-label'}}, {label: 'Email'}) }}
-                {{ form_widget(registrationForm.email, {attr: {'class': 'form-control-sm', 'type': 'email', 'placeholder': 'example@email.com'}}) }}
-            </div>
-        </div>
+                <div class="mp-form-group">
+                    {{ form_label(registrationForm.email, 'Email Address', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.email, {attr: {'class': 'form-control', 'type': 'email', 'placeholder': 'your@email.com'}}) }}
+                    {{ form_errors(registrationForm.email) }}
+                </div>
 
-        <!-- Password -->
-        <div class="row row-cols-auto g-3 justify-content-center">
-            <div class="col-auto">
-                {{ form_label(registrationForm.plainPassword, {attr: {'class': 'form-label'}}, {label: 'Password'}) }}
-                {{ form_widget(registrationForm.plainPassword, {attr: {'class': 'form-control-sm'}}) }}
-                <span id="usernameHelpInline" class="form-text">
-                    Must be 6-20 characters long.
-                </span>
-            </div>
-        </div>
+                <div class="mp-form-group">
+                    {{ form_label(registrationForm.plainPassword, 'Password', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.plainPassword, {attr: {'class': 'form-control', 'placeholder': '6-20 characters'}}) }}
+                    {{ form_errors(registrationForm.plainPassword) }}
+                </div>
 
-        <!-- Agree terms -->
-        <div class="row g-3 justify-content-center">
-            <div class="col-auto">
-                {{ form_label(registrationForm.agreeTerms, {attr: {'class': 'col-form-label'}}, {label: 'Agree terms'}) }}
-            </div>
-            <div class="col-auto">
-                {{ form_widget(registrationForm.agreeTerms) }}
-            </div>
-        </div>
+                <div class="mp-form-group d-flex align-items-center gap-2 mt-3">
+                    {{ form_widget(registrationForm.agreeTerms, {attr: {'class': 'form-check-input mt-0'}}) }}
+                    {{ form_label(registrationForm.agreeTerms, 'I agree to the Terms of Service', {'label_attr': {'class': 'form-check-label mb-0'}}) }}
+                    {{ form_errors(registrationForm.agreeTerms) }}
+                </div>
 
-        <!-- Submit button -->
-        <div class="row g-3 justify-content-center">
-            <div class="col-auto">
-            <button type="submit" class="btn btn-primary">Register</button>
-            </div>
-        </div>
+                <button type="submit" class="mp-btn mp-btn-primary w-100 justify-content-center mt-4">
+                    <i class="fa-solid fa-user-plus me-2"></i>Create Account
+                </button>
             {{ form_end(registrationForm) }}
-</div>
-    {% endblock %}
+
+            <div class="text-center mt-4 pt-3 border-top" style="border-color: var(--mp-border-glass) !important;">
+                <span style="color: var(--mp-text-muted); font-size: 0.85rem;">Already registered?</span>
+                <a href="{{ path('app_login') }}" class="ms-1" style="font-weight: 500;">Sign in here</a>
+            </div>
+        </div>
+    </div>
 {% endblock %}

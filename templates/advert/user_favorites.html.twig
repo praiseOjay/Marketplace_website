@@ -1,47 +1,43 @@
 {% extends 'layout.html.twig' %}
 
-{% block title %}Browse Adverts — Marketplace{% endblock %}
+{% block title %}Saved Adverts — Marketplace{% endblock %}
 
 {% block content %}
     <div class="container mp-animate-fade">
-        {# Section header #}
-        <div class="mp-section-header">
-            <h2>Browse Adverts</h2>
-            <p>Discover great deals from our community</p>
+        <div class="mp-section-header d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <h2><i class="fa-solid fa-heart me-2" style="color: var(--mp-danger);"></i>Saved Adverts</h2>
+                <p>Items you have bookmarked for later</p>
+            </div>
+            <a href="{{ path('home') }}" class="mp-btn mp-btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Browse All Adverts
+            </a>
         </div>
 
         {% if pagination is empty %}
             <div class="mp-empty-state">
-                <i class="fa-solid fa-box-open"></i>
-                <h3>No adverts yet</h3>
-                <p>Be the first to post an advert on the marketplace!</p>
-                {% if is_granted('ROLE_USER') %}
-                    <a href="{{ path('new_advert') }}" class="mp-btn mp-btn-primary mt-3">
-                        <i class="fa-solid fa-plus"></i> Create Advert
-                    </a>
-                {% endif %}
+                <i class="fa-regular fa-heart"></i>
+                <h3>No saved adverts yet</h3>
+                <p>Click the heart icon on any advert card to save it to your bookmarks.</p>
+                <a href="{{ path('home') }}" class="mp-btn mp-btn-primary mt-3">
+                    <i class="fa-solid fa-store"></i> Explore Marketplace
+                </a>
             </div>
         {% else %}
             <div class="row g-4 mp-stagger">
                 {% for advert in pagination %}
                     <div class="col-12 col-sm-6 col-lg-4 mp-animate-in">
                         <div class="mp-card h-100">
-                            {# Image #}
                             <div class="mp-card-img-wrapper">
                                 <img src="{{ asset('images/' ~ advert.imageFileName) }}" alt="{{ advert.title }}">
-                                {# Favorite button #}
-                                {% if is_granted('ROLE_USER') %}
-                                    <a href="{{ path('favorite_advert', {'id': advert.id}) }}" class="mp-favorite-btn {% if advert.isFavoritedBy(app.user) %}active{% endif %}">
-                                        <i class="fa-{% if advert.isFavoritedBy(app.user) %}solid{% else %}regular{% endif %} fa-heart"></i>
-                                    </a>
-                                {% endif %}
-                                {# Price overlay #}
+                                <a href="{{ path('favorite_advert', {'id': advert.id}) }}" class="mp-favorite-btn active" title="Remove from saved">
+                                    <i class="fa-solid fa-heart"></i>
+                                </a>
                                 <div class="mp-card-img-overlay">
                                     <span class="mp-price">£{{ advert.price | number_format(0) }}</span>
                                 </div>
                             </div>
 
-                            {# Body #}
                             <div class="mp-card-body">
                                 <h5 class="mp-card-title">
                                     <a href="{{ path('show_advert', {'slug': advert.slug}) }}">{{ advert.title }}</a>
@@ -65,7 +61,6 @@
                                 </div>
                             </div>
 
-                            {# Footer #}
                             <div class="mp-card-footer">
                                 <div class="mp-card-meta">
                                     <i class="fa-solid fa-user-circle"></i>
@@ -81,8 +76,7 @@
                 {% endfor %}
             </div>
 
-            {# Pagination #}
-            <nav class="mt-4 d-flex justify-content-center" aria-label="Advert pagination">
+            <nav class="mt-4 d-flex justify-content-center" aria-label="Saved adverts pagination">
                 {{ knp_pagination_render(pagination, 'pagination/twitter_bootstrap_v4_pagination.html.twig') }}
             </nav>
         {% endif %}

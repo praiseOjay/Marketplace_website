@@ -2,14 +2,18 @@
 
 namespace App\Entity;
 
+use App\Enum\AdvertStatus;
 use App\Repository\AdvertRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Serializable;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Serializer\Attribute\Ignore;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 #[ORM\Entity(repositoryClass: AdvertRepository::class)]
+#[ORM\Index(name: 'idx_advert_slug', columns: ['slug'])]
+#[ORM\Index(name: 'idx_advert_status', columns: ['status'])]
+#[ORM\Index(name: 'idx_advert_published', columns: ['is_published'])]
 class Advert
 {
     #[ORM\Id]
@@ -19,6 +23,9 @@ class Advert
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $slug = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
@@ -38,12 +45,27 @@ class Advert
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'adverts')]
     private $username;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'boughtAdverts')]
+    private ?User $buyer = null;
+
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $imageFileName;
+    private ?string $imageFileName = null;
+
     #[ORM\Column(type: 'boolean')]
-    private ?bool $isPublished;
+    private ?bool $isPublished = true;
 
+    #[ORM\Column(type: 'string', enumType: AdvertStatus::class)]
+    private AdvertStatus $status = AdvertStatus::PUBLISHED;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'favoriteAdverts')]
+    private Collection $favoritedBy;
+
+    public function __construct()
+    {
+        $this->favoritedBy = new ArrayCollection();
+        $this->status = AdvertStatus::PUBLISHED;
+        $this->isPublished = true;
+    }
 
     public function getCategory(): ?Categories
     {
@@ -56,12 +78,12 @@ class Advert
         return $this;
     }
 
-    public function getImageFileName(): string
+    public function getImageFileName(): ?string
     {
         return $this->imageFileName;
     }
 
-    public function setImageFileName(string $imageFileName): self
+    public function setImageFileName(?string $imageFileName): self
     {
         $this->imageFileName = $imageFileName;
 
@@ -78,6 +100,18 @@ class Advert
         $this->username = $user;
         return $this;
     }
+
+    public function getBuyer(): ?User
+    {
+        return $this->buyer;
+    }
+
+    public function setBuyer(?User $buyer): static
+    {
+        $this->buyer = $buyer;
+        return $this;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -91,7 +125,31 @@ class Advert
     public function setTitle(?string $title): static
     {
         $this->title = $title;
+        $this->generateSlug();
 
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        if (!$this->slug && $this->title) {
+            $this->generateSlug();
+        }
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
+        return $this;
+    }
+
+    public function generateSlug(): static
+    {
+        if ($this->title) {
+            $slugger = new AsciiSlugger();
+            $this->slug = strtolower($slugger->slug($this->title)->toString());
+        }
         return $this;
     }
 
@@ -147,5 +205,52 @@ class Advert
     public function setIsPublished(?bool $isPublished): void
     {
         $this->isPublished = $isPublished;
+    }
+
+    public function getStatus(): AdvertStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(AdvertStatus $status): static
+    {
+        $this->status = $status;
+        $this->isPublished = ($status === AdvertStatus::PUBLISHED);
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getFavoritedBy(): Collection
+    {
+        return $this->favoritedBy;
+    }
+
+    public function addFavoritedBy(User $user): static
+    {
+        if (!$this->favoritedBy->contains($user)) {
+            $this->favoritedBy->add($user);
+            $user->addFavoriteAdvert($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavoritedBy(User $user): static
+    {
+        if ($this->favoritedBy->removeElement($user)) {
+            $user->removeFavoriteAdvert($this);
+        }
+
+        return $this;
+    }
+
+    public function isFavoritedBy(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+        return $this->favoritedBy->contains($user);
     }
 }

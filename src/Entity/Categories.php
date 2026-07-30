@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: CategoriesRepository::class)]
-#[Broadcast]
 class Categories
 {
     #[ORM\Id]

@@ -1,0 +1,57 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Chat with {{ otherUser.username }} — Marketplace{% endblock %}
+
+{% block content %}
+    <div class="container mp-animate-fade">
+        <div class="mp-form-card mp-animate-in" style="max-width: 720px; padding: 1.75rem;">
+            {# Header #}
+            <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom" style="border-color: var(--mp-border-glass) !important;">
+                <div class="d-flex align-items-center gap-3">
+                    <a href="{{ path('user_inbox') }}" class="mp-btn mp-btn-outline mp-btn-sm me-1" title="Back to Inbox">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                    <img src="{{ asset('images/' ~ otherUser.imageFileName) }}" alt="{{ otherUser.username }}" class="rounded-circle" style="width: 42px; height: 42px; object-fit: cover; border: 2px solid var(--mp-accent);">
+                    <div>
+                        <h5 class="mb-0" style="font-weight: 700;">{{ otherUser.username }}</h5>
+                        <span style="font-size: 0.75rem; color: var(--mp-text-muted);">Direct Conversation</span>
+                    </div>
+                </div>
+            </div>
+
+            {# Messages Stream #}
+            <div class="mp-chat-messages mb-4 p-3 rounded" style="background: rgba(0, 0, 0, 0.2); max-height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;">
+                {% if messages is empty %}
+                    <p class="text-center text-muted my-4" style="font-size: 0.85rem;">No messages exchanged yet. Send a greeting!</p>
+                {% else %}
+                    {% for msg in messages %}
+                        {% set isMe = (msg.sender == app.user) %}
+                        <div class="d-flex flex-column {% if isMe %}align-items-end{% else %}align-items-start{% endif %}">
+                            {% if msg.advert %}
+                                <div class="mb-1 px-2 py-1 rounded" style="background: rgba(255, 255, 255, 0.05); font-size: 0.75rem; color: var(--mp-text-muted);">
+                                    <i class="fa-solid fa-tag me-1"></i> Re: <a href="{{ path('show_advert', {'slug': msg.advert.slug}) }}" style="color: var(--mp-accent-hover);">{{ msg.advert.title }}</a>
+                                </div>
+                            {% endif %}
+                            <div class="p-3 rounded-3" style="max-width: 80%; font-size: 0.9rem; {% if isMe %}background: var(--mp-accent); color: #fff; border-bottom-right-radius: 4px !important;{% else %}background: var(--mp-bg-secondary); color: var(--mp-text-primary); border: 1px solid var(--mp-border-glass); border-bottom-left-radius: 4px !important;{% endif %}">
+                                {{ msg.content | nl2br }}
+                            </div>
+                            <span style="font-size: 0.7rem; color: var(--mp-text-muted); margin-top: 0.25rem;">
+                                {{ msg.createdAt | date('H:i, d M') }}
+                            </span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            {# Reply Form #}
+            {{ form_start(form) }}
+                <div class="input-group gap-2">
+                    {{ form_widget(form.content, {'attr': {'class': 'form-control', 'rows': 2, 'placeholder': 'Type your message...'}}) }}
+                    <button type="submit" class="mp-btn mp-btn-primary" style="align-self: flex-end; padding: 0.65rem 1.25rem;">
+                        <i class="fa-solid fa-paper-plane me-1"></i> Send
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

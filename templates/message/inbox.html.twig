@@ -1,0 +1,57 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Messages Inbox — Marketplace{% endblock %}
+
+{% block content %}
+    <div class="container mp-animate-fade">
+        <div class="mp-section-header d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <h2><i class="fa-solid fa-comments me-2" style="color: var(--mp-accent);"></i>Message Inbox</h2>
+                <p>Manage your conversations with buyers and sellers</p>
+            </div>
+        </div>
+
+        {% if conversations is empty %}
+            <div class="mp-empty-state">
+                <i class="fa-regular fa-paper-plane"></i>
+                <h3>No messages yet</h3>
+                <p>When you contact a seller or a buyer messages you, your conversations will appear here.</p>
+                <a href="{{ path('home') }}" class="mp-btn mp-btn-primary mt-3">
+                    <i class="fa-solid fa-store"></i> Browse Marketplace
+                </a>
+            </div>
+        {% else %}
+            <div class="mp-table-wrapper mp-animate-in">
+                <div class="list-group list-group-flush">
+                    {% for conv in conversations %}
+                        {% set partner = conv.partner %}
+                        {% set lastMsg = conv.lastMessage %}
+                        <a href="{{ path('message_thread', {'otherUserId': partner.id}) }}" class="list-group-item list-group-item-action p-3 d-flex align-items-center justify-content-between" style="background: transparent; border-color: var(--mp-border-glass); color: var(--mp-text-primary); transition: background var(--mp-transition-fast);">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="{{ asset('images/' ~ partner.imageFileName) }}" alt="{{ partner.username }}" class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover; border: 2px solid var(--mp-border-glass);">
+                                <div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <h6 class="mb-0" style="font-weight: 600;">{{ partner.username }}</h6>
+                                        {% if conv.unreadCount > 0 %}
+                                            <span class="badge bg-danger rounded-pill">{{ conv.unreadCount }} new</span>
+                                        {% endif %}
+                                    </div>
+                                    <p class="mb-0 text-truncate" style="max-width: 380px; font-size: 0.85rem; color: var(--mp-text-secondary);">
+                                        {% if lastMsg.sender == app.user %}
+                                            <span class="text-muted">You:</span>
+                                        {% endif %}
+                                        {{ lastMsg.content }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <span style="font-size: 0.75rem; color: var(--mp-text-muted);">{{ lastMsg.createdAt | date('d M, H:i') }}</span>
+                                <i class="fa-solid fa-chevron-right ms-2 text-muted" style="font-size: 0.75rem;"></i>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

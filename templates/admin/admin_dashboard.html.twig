@@ -1,3 +1,139 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
-{% block content_title %}Dashboard{% endblock %}
+{% block content_title %}Platform Dashboard{% endblock %}
+
+{% block main %}
+    {# Metric Cards Grid #}
+    <div class="row g-3 mb-4">
+        {# Total Users #}
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100 border-0 shadow-sm p-3" style="background: rgba(99, 102, 241, 0.1); border-left: 4px solid #6366f1 !important;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-muted small fw-semibold text-uppercase">Total Users</div>
+                        <div class="h2 mb-0 fw-bold" style="color: #6366f1;">{{ userCount }}</div>
+                    </div>
+                    <div class="p-3 rounded-circle" style="background: rgba(99, 102, 241, 0.15);">
+                        <i class="fas fa-users fa-2x" style="color: #6366f1;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Total Adverts & Status Breakdown #}
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100 border-0 shadow-sm p-3" style="background: rgba(59, 130, 246, 0.1); border-left: 4px solid #3b82f6 !important;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-muted small fw-semibold text-uppercase">Total Adverts</div>
+                        <div class="h2 mb-1 fw-bold" style="color: #3b82f6;">{{ totalAdverts }}</div>
+                        <div class="d-flex gap-1 flex-wrap">
+                            <span class="badge bg-success" style="font-size: 0.65rem;">{{ publishedCount }} Active</span>
+                            {% if pendingCount > 0 %}
+                                <span class="badge bg-warning text-dark" style="font-size: 0.65rem;">{{ pendingCount }} Pending</span>
+                            {% endif %}
+                            <span class="badge bg-info" style="font-size: 0.65rem;">{{ soldCount }} Sold</span>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-circle" style="background: rgba(59, 130, 246, 0.15);">
+                        <i class="fas fa-shop fa-2x" style="color: #3b82f6;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Total Platform Sales Volume #}
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100 border-0 shadow-sm p-3" style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid #10b981 !important;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-muted small fw-semibold text-uppercase">Sales Volume</div>
+                        <div class="h2 mb-0 fw-bold" style="color: #10b981;">£{{ totalVolume | number_format(2) }}</div>
+                    </div>
+                    <div class="p-3 rounded-circle" style="background: rgba(16, 185, 129, 0.15);">
+                        <i class="fas fa-sack-dollar fa-2x" style="color: #10b981;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Total Messages #}
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100 border-0 shadow-sm p-3" style="background: rgba(245, 158, 11, 0.1); border-left: 4px solid #f59e0b !important;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-muted small fw-semibold text-uppercase">In-App Messages</div>
+                        <div class="h2 mb-0 fw-bold" style="color: #f59e0b;">{{ messageCount }}</div>
+                    </div>
+                    <div class="p-3 rounded-circle" style="background: rgba(245, 158, 11, 0.15);">
+                        <i class="fas fa-comments fa-2x" style="color: #f59e0b;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Recent Adverts Moderation Queue #}
+    <div class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-transparent d-flex align-items-center justify-content-between py-3">
+            <h5 class="card-title mb-0 font-weight-bold">
+                <i class="fas fa-clock text-primary me-2"></i>Recent Advert Submissions
+            </h5>
+            <span class="badge bg-secondary">{{ recentAdverts | length }} Items</span>
+        </div>
+        <div class="card-body p-0">
+            {% if recentAdverts is empty %}
+                <p class="text-center text-muted py-4 mb-0">No adverts submitted yet.</p>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Thumbnail</th>
+                                <th>Title</th>
+                                <th>Seller</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Posted</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for advert in recentAdverts %}
+                                <tr>
+                                    <td>
+                                        <img src="{{ asset('images/' ~ advert.imageFileName) }}" alt="{{ advert.title }}" style="width: 48px; height: 36px; object-fit: cover; border-radius: 4px;">
+                                    </td>
+                                    <td>
+                                        <strong>{{ advert.title }}</strong>
+                                    </td>
+                                    <td>{{ advert.user.username | default('Unknown') }}</td>
+                                    <td>
+                                        {% if advert.category %}
+                                            <span class="badge bg-secondary">{{ advert.category.categoryName }}</span>
+                                        {% else %}
+                                            <span class="text-muted">None</span>
+                                        {% endif %}
+                                    </td>
+                                    <td><strong>£{{ advert.price | number_format(0) }}</strong></td>
+                                    <td>
+                                        {% if advert.status.value == 'published' %}
+                                            <span class="badge bg-success">Published</span>
+                                        {% elseif advert.status.value == 'pending_review' %}
+                                            <span class="badge bg-warning text-dark">Pending Review</span>
+                                        {% elseif advert.status.value == 'sold' %}
+                                            <span class="badge bg-info">Sold</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ advert.status.label }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-muted small">{{ advert.timestamp | date('d M Y, H:i') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -4,20 +4,18 @@ namespace App\Controller\Admin;
 
 use App\Entity\Advert;
 use App\Entity\Categories;
-use App\Entity\Category;
+use App\Entity\Message;
 use App\Entity\User;
+use App\Enum\AdvertStatus;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Controller\DashboardControllerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -25,58 +23,79 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class DashboardController extends AbstractDashboardController implements DashboardControllerInterface
 {
-    #[isGranted('ROLE_MODERATOR')]
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager
+    ) {
+    }
+
+    #[IsGranted('ROLE_MODERATOR')]
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
-//        return parent::index();
+        $userCount = $this->entityManager->getRepository(User::class)->count([]);
+        $categoriesCount = $this->entityManager->getRepository(Categories::class)->count([]);
+        $messageCount = $this->entityManager->getRepository(Message::class)->count([]);
 
-        // Option 1. You can make your dashboard redirect to some common page of your backend
-        //
-//         $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-//        try {
-//            return $this->redirect($adminUrlGenerator->setController(UserCrudController::class)->generateUrl());
-//        } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
-//        }
+        $advertRepo = $this->entityManager->getRepository(Advert::class);
+        $totalAdverts = $advertRepo->count([]);
+        $publishedCount = $advertRepo->count(['status' => AdvertStatus::PUBLISHED]);
+        $pendingCount = $advertRepo->count(['status' => AdvertStatus::PENDING_REVIEW]);
+        $soldCount = $advertRepo->count(['status' => AdvertStatus::SOLD]);
 
-        // Option 2. You can make your dashboard redirect to different pages depending on the user
-        //
-//         if ('jane' === $this->getUser()->getUsername()) {
-//             return $this->redirect('...');
-//         }
+        $soldAdverts = $advertRepo->findBy(['status' => AdvertStatus::SOLD]);
+        $totalVolume = 0.0;
+        foreach ($soldAdverts as $ad) {
+            $totalVolume += (float) $ad->getPrice();
+        }
 
-        // Option 3. You can render some custom template to display a proper dashboard with widgets, etc.
-        // (tip: it's easier if your template extends from @EasyAdmin/page/content.html.twig)
-        //
-         return $this->render('admin/admin_dashboard.html.twig');
+        $recentAdverts = $advertRepo->findBy([], ['id' => 'DESC'], 5);
+
+        return $this->render('admin/admin_dashboard.html.twig', [
+            'userCount' => $userCount,
+            'categoriesCount' => $categoriesCount,
+            'messageCount' => $messageCount,
+            'totalAdverts' => $totalAdverts,
+            'publishedCount' => $publishedCount,
+            'pendingCount' => $pendingCount,
+            'soldCount' => $soldCount,
+            'totalVolume' => $totalVolume,
+            'recentAdverts' => $recentAdverts,
+        ]);
     }
 
     public function configureDashboard(): Dashboard
     {
-        //set your dashboard name
         return Dashboard::new()
             ->setTitle('Marketplace Dashboard');
-
     }
 
     public function configureMenuItems(): iterable
     {
-        //set your menu items
+        $pendingCount = $this->entityManager->getRepository(Advert::class)->count(['status' => AdvertStatus::PENDING_REVIEW]);
+
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-dashboard');
         yield MenuItem::linkToUrl('Homepage', 'fas fa-home', $this->generateUrl('home'));
         yield MenuItem::linkToCrud('Users', 'fas fa-users', User::class)
             ->setPermission('ROLE_ADMIN');
         yield MenuItem::linkToCrud('Categories', 'fas fa-list', Categories::class)
             ->setPermission('ROLE_ADMIN');
-        yield MenuItem::linkToCrud('Adverts', 'fas fa-shop', Advert::class)
+
+        $advertMenu = MenuItem::linkToCrud('Adverts', 'fas fa-shop', Advert::class)
+            ->setPermission('ROLE_MODERATOR');
+        if ($pendingCount > 0) {
+            $advertMenu->setBadge($pendingCount, 'warning');
+        }
+        yield $advertMenu;
+
+        yield MenuItem::linkToCrud('Messages', 'fas fa-comments', Message::class)
             ->setPermission('ROLE_MODERATOR');
     }
 
     public function configureUserMenu(UserInterface $user): UserMenu
     {
-        //set your user menu items
+        /** @var User $user */
         return parent::configureUserMenu($user)
-            ->setAvatarUrl('images/'.$user->getImageFileName())
+            ->setAvatarUrl($user->getImageFileName() ? 'images/'.$user->getImageFileName() : '')
             ->setMenuItems([
                 MenuItem::linkToUrl('My Profile', 'fa fa-user', $this->generateUrl('show_profile')),
             ]);
@@ -84,7 +103,6 @@ class DashboardController extends AbstractDashboardController implements Dashboa
 
     public function configureActions(): Actions
     {
-        //set your actions
         return parent::configureActions()
             ->add(Crud::PAGE_INDEX, Action::DETAIL);
     }
