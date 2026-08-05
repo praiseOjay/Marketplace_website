@@ -24,7 +24,7 @@
                     <div class="col-12 col-sm-6 col-lg-4 mp-animate-in">
                         <div class="mp-card h-100">
                             <div class="mp-card-img-wrapper">
-                                <img src="{{ asset('images/' ~ filtered_advert.imageFileName) }}" alt="{{ filtered_advert.title }}" loading="lazy" decoding="async">
+                                <img src="{{ asset(filtered_advert.imageFileName ? 'images/' ~ filtered_advert.imageFileName : 'images/default_image.png') }}" alt="{{ filtered_advert.title }}" loading="lazy" decoding="async">
                                 {% if is_granted('ROLE_USER') %}
                                     <a href="{{ path('favorite_advert', {'id': filtered_advert.id}) }}" class="mp-favorite-btn {% if filtered_advert.isFavoritedBy(app.user) %}active{% endif %}">
                                         <i class="fa-{% if filtered_advert.isFavoritedBy(app.user) %}solid{% else %}regular{% endif %} fa-heart"></i>
@@ -41,9 +41,9 @@
                                 </h5>
                                 <div class="d-flex flex-wrap gap-2 mb-2">
                                     {% if filtered_advert.category %}
-                                        <span class="mp-badge mp-badge-category">
+                                        <a href="{{ path('live_search', {'title': '', 'category': filtered_advert.category.id}) }}" class="mp-badge mp-badge-category text-decoration-none">
                                             <i class="fa-solid fa-tag"></i> {{ filtered_advert.category.categoryName }}
-                                        </span>
+                                        </a>
                                     {% endif %}
                                     {% set statusClass = {
                                         'published': 'published',

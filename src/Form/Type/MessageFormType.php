@@ -25,9 +25,6 @@ class MessageFormType extends AbstractType
                 'constraints' => [
                     new NotBlank(['message' => 'Please enter a message.']),
                 ],
-            ])
-            ->add('send', SubmitType::class, [
-                'label' => 'Send Message',
             ]);
     }
 

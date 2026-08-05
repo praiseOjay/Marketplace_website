@@ -4,8 +4,9 @@
     {# ======== NAVBAR ======== #}
     <nav class="mp-navbar navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="{{ path('home') }}">
-                <i class="fa-solid fa-bag-shopping me-2"></i>Marketplace
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ path('home') }}">
+                <i class="fa-solid fa-bag-shopping" style="font-size: 1.35rem; color: var(--mp-accent);"></i>
+                <span>Marketplace</span>
             </a>
 
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mpNavbar" aria-controls="mpNavbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -15,28 +16,46 @@
             <div class="collapse navbar-collapse" id="mpNavbar">
                 {# Integrated Search Capsule #}
                 <div class="mx-auto my-2 my-lg-0 mp-search-capsule">
-                    {{ form_start(search_form, {'attr': {'class': 'd-flex align-items-center w-100'}}) }}
+                    <form action="{{ path('live_search') }}" method="GET" class="d-flex align-items-center w-100">
                         <div class="input-group mp-search-input-group">
                             <span class="input-group-text border-0 bg-transparent ps-3 text-muted">
                                 <i class="fa-solid fa-magnifying-glass"></i>
                             </span>
-                            {{ form_widget(search_form.title, {'attr': {'class': 'form-control border-0 bg-transparent text-light shadow-none ps-1', 'placeholder': 'Search adverts...'}}) }}
-                            {{ form_widget(search_form.category, {'attr': {'class': 'form-select border-0 bg-transparent text-light shadow-none mp-category-select'}}) }}
+                            <input type="text" name="title" value="{{ app.request.query.get('title') }}" class="form-control border-0 bg-transparent text-light shadow-none ps-1" placeholder="Search adverts..." aria-label="Search adverts">
+                            
+                            <select name="category" class="form-select border-0 bg-transparent text-light shadow-none mp-category-select" aria-label="Filter by category">
+                                <option value="0" {% if app.request.query.get('category') is null or app.request.query.get('category') == '0' %}selected{% endif %}>Choose a category</option>
+                                {% if categories is defined and categories is not empty %}
+                                    {% for cat in categories %}
+                                        <option value="{{ cat.id }}" {% if app.request.query.get('category') == cat.id %}selected{% endif %}>{{ cat.categoryName }}</option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="57" {% if app.request.query.get('category') == '57' %}selected{% endif %}>Electronics</option>
+                                    <option value="58" {% if app.request.query.get('category') == '58' %}selected{% endif %}>Vehicles</option>
+                                    <option value="59" {% if app.request.query.get('category') == '59' %}selected{% endif %}>Real Estate</option>
+                                    <option value="60" {% if app.request.query.get('category') == '60' %}selected{% endif %}>Fashion</option>
+                                    <option value="61" {% if app.request.query.get('category') == '61' %}selected{% endif %}>Home & Garden</option>
+                                    <option value="62" {% if app.request.query.get('category') == '62' %}selected{% endif %}>Jobs & Services</option>
+                                    <option value="63" {% if app.request.query.get('category') == '63' %}selected{% endif %}>Sports & Leisure</option>
+                                    <option value="64" {% if app.request.query.get('category') == '64' %}selected{% endif %}>Books & Media</option>
+                                    <option value="65" {% if app.request.query.get('category') == '65' %}selected{% endif %}>Toys & Hobbies</option>
+                                    <option value="66" {% if app.request.query.get('category') == '66' %}selected{% endif %}>Health & Beauty</option>
+                                    <option value="67" {% if app.request.query.get('category') == '67' %}selected{% endif %}>Pets & Animals</option>
+                                    <option value="68" {% if app.request.query.get('category') == '68' %}selected{% endif %}>Baby & Kids</option>
+                                    <option value="69" {% if app.request.query.get('category') == '69' %}selected{% endif %}>Art & Collectibles</option>
+                                    <option value="70" {% if app.request.query.get('category') == '70' %}selected{% endif %}>Business & Industrial</option>
+                                {% endif %}
+                            </select>
+
                             <button type="submit" class="btn mp-search-submit-btn">
                                 Search
                             </button>
                         </div>
-                    {{ form_end(search_form) }}
+                    </form>
                 </div>
 
                 {# Nav links #}
                 <ul class="navbar-nav ms-auto align-items-center gap-2">
-                    <li class="nav-item">
-                        <a class="nav-link {% if app.request.attributes.get('_route') == 'home' %}active{% endif %}" href="{{ path('home') }}">
-                            <i class="fa-solid fa-house"></i> Home
-                        </a>
-                    </li>
-
                     {% if is_granted('ROLE_USER') %}
                         <li class="nav-item">
                             <a class="nav-link {% if app.request.attributes.get('_route') == 'user_favorites' %}active{% endif %}" href="{{ path('user_favorites') }}">
@@ -59,7 +78,7 @@
                         {# User Avatar Dropdown #}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 py-0 border-0" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="{{ asset('images/' ~ app.user.imageFileName) }}" alt="{{ app.user.username }}" class="mp-avatar">
+                                <img src="{{ asset(app.user.imageFileName ? 'images/' ~ app.user.imageFileName : 'images/default_avatar.png') }}" alt="{{ app.user.username }}" class="mp-avatar">
                                 <span class="d-none d-lg-inline-block fw-medium" style="color: var(--mp-text-primary); font-size: 0.875rem;">{{ app.user.username }}</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end mp-dropdown-menu shadow-lg border-0" aria-labelledby="userDropdown">
@@ -117,7 +136,56 @@
     {# ======== FOOTER ======== #}
     <footer class="mp-footer">
         <div class="container">
-            <p class="mp-footer-text">© {{ 'now' | date('Y') }} Marketplace — Built with Symfony. All rights reserved.</p>
+            <div class="mp-footer-grid">
+                <div>
+                    <div class="mp-footer-brand-title">
+                        <i class="fa-solid fa-bag-shopping me-2"></i>Marketplace
+                    </div>
+                    <p class="mp-footer-desc">
+                        The ultimate destination to buy, sell, and connect with trusted members in your local community and beyond.
+                    </p>
+                </div>
+
+                <div>
+                    <div class="mp-footer-heading">Marketplace</div>
+                    <ul class="mp-footer-links">
+                        <li><a href="{{ path('home') }}">Browse All</a></li>
+                        <li><a href="{{ path('new_advert') }}">Sell an Item</a></li>
+                        <li><a href="{{ path('user_favorites') }}">Saved Items</a></li>
+                        <li><a href="{{ path('user_inbox') }}">Direct Messages</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <div class="mp-footer-heading">Categories</div>
+                    <ul class="mp-footer-links">
+                        {% if categories is defined and categories is not empty %}
+                            {% for cat in categories|slice(0, 6) %}
+                                <li><a href="{{ path('live_search', {'title': '', 'category': cat.id}) }}">{{ cat.categoryName }}</a></li>
+                            {% endfor %}
+                        {% else %}
+                            <li><a href="{{ path('live_search', {'title': '', 'category': 57}) }}">Electronics</a></li>
+                            <li><a href="{{ path('live_search', {'title': '', 'category': 58}) }}">Vehicles</a></li>
+                            <li><a href="{{ path('live_search', {'title': '', 'category': 59}) }}">Real Estate</a></li>
+                            <li><a href="{{ path('live_search', {'title': '', 'category': 60}) }}">Fashion</a></li>
+                            <li><a href="{{ path('live_search', {'title': '', 'category': 61}) }}">Home & Garden</a></li>
+                            <li><a href="{{ path('live_search', {'title': '', 'category': 63}) }}">Sports & Leisure</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <div>
+                    <div class="mp-footer-heading">Trust & Security</div>
+                    <ul class="mp-footer-links">
+                        <li><a href="#"><i class="fa-solid fa-shield-halved me-1 text-success"></i> Buyer Protection</a></li>
+                        <li><a href="#"><i class="fa-solid fa-circle-check me-1 text-info"></i> Verified Sellers</a></li>
+                        <li><a href="#"><i class="fa-solid fa-lock me-1 text-warning"></i> Encrypted Data</a></li>
+                        <li><a href="#"><i class="fa-solid fa-headset me-1 text-primary"></i> 24/7 Support</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <p class="mp-footer-text">© {{ 'now' | date('Y') }} Marketplace — Built with PHP & Symfony. All rights reserved.</p>
         </div>
     </footer>
 {% endblock %}

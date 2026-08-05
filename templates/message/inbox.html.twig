@@ -28,7 +28,7 @@
                         {% set lastMsg = conv.lastMessage %}
                         <a href="{{ path('message_thread', {'otherUserId': partner.id}) }}" class="list-group-item list-group-item-action p-3 d-flex align-items-center justify-content-between" style="background: transparent; border-color: var(--mp-border-glass); color: var(--mp-text-primary); transition: background var(--mp-transition-fast);">
                             <div class="d-flex align-items-center gap-3">
-                                <img src="{{ asset('images/' ~ partner.imageFileName) }}" alt="{{ partner.username }}" class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover; border: 2px solid var(--mp-border-glass);">
+                                <img src="{{ asset(partner.imageFileName ? 'images/' ~ partner.imageFileName : 'images/default_avatar.png') }}" alt="{{ partner.username }}" class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover; border: 2px solid var(--mp-border-glass);">
                                 <div>
                                     <div class="d-flex align-items-center gap-2">
                                         <h6 class="mb-0" style="font-weight: 600;">{{ partner.username }}</h6>

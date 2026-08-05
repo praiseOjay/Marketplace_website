@@ -1,89 +1,115 @@
-# Advert Marketplace Website
+# 🛍️ Marketplace — Premium Classifieds Web Application
 
-A CRUD (Create, Read, Update, Delete) Marketplace website developed using PHP and the Symfony framework. This application allows users to create, manage, and view adverts in a secure and user-friendly environment.
+A modern, full-featured **Marketplace & Classifieds Web Application** built with **PHP 8.2+**, **Symfony 7**, **Doctrine ORM**, **Twig**, and **Bootstrap 5**. Designed with a sleek dark glassmorphism aesthetic, instant buyer-seller messaging, responsive grid layouts, category filtering, and robust security defenses.
 
-## Features
+---
 
-- User Registration and Authentication
-- Create, Edit, and Delete Adverts
-- View Adverts (for both registered and non-registered users)
-- Admin Dashboard for user and advert management
-- Moderator capabilities for advert moderation
-- Category Management
-- Search and Filter Adverts
-- Pagination for advert listings
+## 📸 Screenshots & Showcase
 
-## Technologies Used
+### 1. Modern Dark Glassmorphic Homepage & Hero Section
+<img src="./docs/screenshots/homepage_hero.png" alt="Homepage Showcase" width="100%" />
 
-- PHP
-- Symfony Framework
-- Doctrine ORM
-- Twig Template Engine
-- MySQL Database
-- EasyAdmin Bundle
-- KnpPaginator Bundle
-- Bootstrap CSS and JS
-- Symfony Security Bundle
+### 2. Verified Advert Listings & Seller Dashboard
+<img src="./docs/screenshots/listings_grid.png" alt="Listings Showcase" width="100%" />
 
-## Installation
+### 3. Direct Buyer-Seller Messaging Thread
+<img src="./docs/screenshots/messaging_chat.png" alt="Messaging Thread" width="100%" />
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/praiseOjay/Marketplace_website.git
-   ```
+---
 
-2. Install dependencies:
-   ```
-   composer install
-   ```
+## ✨ Core Features
 
-3. Configure the database in the `.env` file:
-   ```
-   DATABASE_URL=mysql://db_user:db_password@127.0.0.1:3306/db_name
-   ```
+- 🎨 **Modern Dark Glassmorphic UI**: Vibrant gradient accents, glassmorphic cards, and micro-interactions.
+- 🚀 **Dynamic Category Quick Filter**: Instant category filtering with active state highlighting.
+- 🔍 **Integrated Search Capsule**: Search by keyword, category, or location seamlessly across all viewports.
+- 📱 **100% Fully Responsive Layout**: Tailored breakpoints for desktop, tablet, and mobile screens.
+- 💬 **Direct Messaging System**: Instant buyer-seller chat threads linked to specific listings.
+- ❤️ **Saved Adverts & Bookmarks**: User favorites management.
+- 📊 **Seller Dashboard**: Real-time listing metrics, portfolio valuation, and quick action management (`View`, `Edit`, `Delete`).
+- 🛡️ **Role-Based Access Control (RBAC)**: Fine-grained permissions for Users, Moderators, and Admins via EasyAdmin 4.
+- 🖼️ **Automated WebP Image Optimization**: Image upload processing, thumbnail generation, and lazy loading.
+- 📦 **Dummy Fixtures Included**: Pre-configured with realistic users, categories, and high-resolution item photography.
 
-4. Create the database and run migrations:
-   ```
-   php bin/console doctrine:database:create
-   php bin/console doctrine:migrations:migrate
-   ```
+---
 
-5. Start the Symfony development server:
-   ```
-   symfony server:start
-   ```
+## 🔒 Security Architecture
 
-## Usage
+- **SQL Injection Defense**: Strict prepared statement parameter binding (`addcslashes($title, '%_')` and Doctrine Query Builder parameterization).
+- **XSS & Injection Protection**: HTML auto-escaping across all Twig templates and input sanitization.
+- **HTTP Security Headers**: Automated listener injecting `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `X-XSS-Protection`, `Referrer-Policy`, and `Permissions-Policy`.
+- **Malicious Upload Defense**: MIME header verification (`getimagesize()`) restricting uploads strictly to JPEG, PNG, and WebP, re-encoding files via GD.
+- **CSRF & Voter Authorization**: Token validation and Symfony Voters for ownership checks.
 
-- Visit `http://localhost:8000` in your web browser to access the application
-- Register a new account or log in with existing credentials
-- Create, view, edit, or delete adverts based on your user role
-- Access the admin dashboard at `/admin` (requires admin or moderator role)
+---
 
-## User Roles
+## ⚡ Performance Optimizations
 
-- **User**: Can create, edit, and delete their own adverts
-- **Moderator**: Can edit, delete, or publish any user's advert
-- **Admin**: Full access to user management and all advert operations
-- **Super Admin**: Highest level of access, can promote users to other roles
+- **N+1 Query Elimination**: Eager `leftJoin` and `addSelect` queries across repositories to fetch listings, users, and categories in single database calls.
+- **Automatic WebP Conversion**: Proportional image resizing to 1200px max width and WebP encoding for fast page loading.
+- **Browser Resource Efficiency**: Native `loading="lazy"` and `decoding="async"` applied across all media templates.
+- **Even Pagination Grid**: 6 items per page ensuring clean 2-row alignment across 3-column layouts.
 
-## Security
+---
 
-- Form login authentication
-- CSRF protection
-- Role-based access control
-- Password hashing
+## 🛠️ Stack & Dependencies
 
-## Contributing
+- **PHP**: 8.2+
+- **Framework**: Symfony 7
+- **Database / ORM**: SQLite / Doctrine ORM
+- **Templating**: Twig Engine
+- **Admin Panel**: EasyAdmin 4
+- **Pagination**: KnpPaginatorBundle
+- **Frontend**: Vanilla CSS + Bootstrap 5 + FontAwesome 6
 
-Contributions to improve the application are welcome. Please feel free to submit issues or pull requests.
+---
 
-## License
+## 🚀 Quickstart & Installation
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+### 1. Clone Repository
+```bash
+git clone https://github.com/praiseOjay/Marketplace_website.git
+cd Marketplace_website
+```
 
-## Contact
+### 2. Install PHP Dependencies
+```bash
+composer install
+```
 
-Praise Ojerinola - Ojerinolapraise@gmail.com
+### 3. Setup Database & Load Fixtures
+```bash
+php bin/console doctrine:database:create --if-not-exists
+php bin/console doctrine:schema:update --force
+php bin/console doctrine:fixtures:load --no-interaction
+```
 
-Project Link: https://github.com/praiseOjay/Marketplace_website.git
+### 4. Run Development Server
+Using Symfony CLI or built-in PHP web server:
+```bash
+php -S 127.0.0.1:8000 -t public public/index.php
+```
+Open **[http://127.0.0.1:8000](http://127.0.0.1:8000)** in your browser.
+
+---
+
+## 👤 Test Demo Credentials
+
+| Role | Username | Email | Password |
+|---|---|---|---|
+| **Admin** | `admin` | `admin@marketplace.com` | `admin123` |
+| **User** | `johndoe` | `john@example.com` | `password123` |
+| **User** | `sarah_smith` | `sarah@example.com` | `password123` |
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 📧 Contact
+
+**Praise Ojerinola** — Ojerinolapraise@gmail.com  
+GitHub: [praiseOjay](https://github.com/praiseOjay)  
+Project Repository: [Marketplace_website](https://github.com/praiseOjay/Marketplace_website.git)

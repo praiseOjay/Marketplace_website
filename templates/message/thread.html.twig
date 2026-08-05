@@ -11,7 +11,7 @@
                     <a href="{{ path('user_inbox') }}" class="mp-btn mp-btn-outline mp-btn-sm me-1" title="Back to Inbox">
                         <i class="fa-solid fa-arrow-left"></i>
                     </a>
-                    <img src="{{ asset('images/' ~ otherUser.imageFileName) }}" alt="{{ otherUser.username }}" class="rounded-circle" style="width: 42px; height: 42px; object-fit: cover; border: 2px solid var(--mp-accent);">
+                    <img src="{{ asset(otherUser.imageFileName ? 'images/' ~ otherUser.imageFileName : 'images/default_avatar.png') }}" alt="{{ otherUser.username }}" class="rounded-circle" style="width: 42px; height: 42px; object-fit: cover; border: 2px solid var(--mp-accent);">
                     <div>
                         <h5 class="mb-0" style="font-weight: 700;">{{ otherUser.username }}</h5>
                         <span style="font-size: 0.75rem; color: var(--mp-text-muted);">Direct Conversation</span>

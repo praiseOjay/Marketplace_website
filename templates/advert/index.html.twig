@@ -1,23 +1,75 @@
 {% extends 'layout.html.twig' %}
 
-{% block title %}Browse Adverts — Marketplace{% endblock %}
+{% block title %}Marketplace — Buy & Sell Anything in Seconds{% endblock %}
 
 {% block content %}
+    {# ======== HERO BANNER ======== #}
+    <section class="mp-hero-banner mp-animate-fade">
+        <div class="container">
+            <div class="mp-hero-content">
+                <div class="mp-hero-badge">
+                    <i class="fa-solid fa-sparkles"></i> Trusted Local Classifieds & Deals
+                </div>
+                <h1 class="mp-hero-title">Buy & Sell Anything in Seconds</h1>
+                <p class="mp-hero-subtitle">
+                    Discover premium pre-owned items, verified local sellers, and unbeatable deals across electronics, vehicles, fashion, real estate, and more.
+                </p>
+
+                <div class="mp-hero-stats">
+                    <div class="mp-stat-item">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span><strong>100%</strong> Verified Listings</span>
+                    </div>
+                    <div class="mp-stat-item">
+                        <i class="fa-solid fa-comments"></i>
+                        <span><strong>Instant</strong> Buyer Messaging</span>
+                    </div>
+                    <div class="mp-stat-item">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span><strong>Zero</strong> Listing Fees</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# ======== MAIN CONTENT AREA ======== #}
     <div class="container mp-animate-fade">
+        {# Dynamic Category Quick Filter Pills Bar #}
+        <div class="mp-category-pills-bar">
+            <a href="{{ path('home') }}" class="mp-pill-item {% if app.request.query.get('category') is null %}active{% endif %}">
+                <i class="fa-solid fa-border-all"></i> All Items
+            </a>
+            {% if categories is defined and categories is not empty %}
+                {% for cat in categories %}
+                    <a href="{{ path('live_search', {'title': '', 'category': cat.id}) }}" class="mp-pill-item {% if app.request.query.get('category') == cat.id %}active{% endif %}">
+                        <i class="fa-solid fa-tag me-1"></i> {{ cat.categoryName }}
+                    </a>
+                {% endfor %}
+            {% endif %}
+        </div>
+
         {# Section header #}
-        <div class="mp-section-header">
-            <h2>Browse Adverts</h2>
-            <p>Discover great deals from our community</p>
+        <div class="mp-section-header d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+            <div>
+                <h2>Featured Adverts</h2>
+                <p class="mb-0">Fresh listings added by verified sellers near you</p>
+            </div>
+            {% if is_granted('ROLE_USER') %}
+                <a href="{{ path('new_advert') }}" class="mp-btn mp-btn-primary">
+                    <i class="fa-solid fa-plus me-1"></i> Post Advert
+                </a>
+            {% endif %}
         </div>
 
         {% if pagination is empty %}
             <div class="mp-empty-state">
                 <i class="fa-solid fa-box-open"></i>
-                <h3>No adverts yet</h3>
+                <h3>No adverts found</h3>
                 <p>Be the first to post an advert on the marketplace!</p>
                 {% if is_granted('ROLE_USER') %}
                     <a href="{{ path('new_advert') }}" class="mp-btn mp-btn-primary mt-3">
-                        <i class="fa-solid fa-plus"></i> Create Advert
+                        <i class="fa-solid fa-plus me-1"></i> Create Advert
                     </a>
                 {% endif %}
             </div>
@@ -28,13 +80,15 @@
                         <div class="mp-card h-100">
                             {# Image #}
                             <div class="mp-card-img-wrapper">
-                                <img src="{{ asset('images/' ~ advert.imageFileName) }}" alt="{{ advert.title }}" loading="lazy" decoding="async">
+                                <img src="{{ asset(advert.imageFileName ? 'images/' ~ advert.imageFileName : 'images/default_image.png') }}" alt="{{ advert.title }}" loading="lazy" decoding="async">
+                                
                                 {# Favorite button #}
                                 {% if is_granted('ROLE_USER') %}
-                                    <a href="{{ path('favorite_advert', {'id': advert.id}) }}" class="mp-favorite-btn {% if advert.isFavoritedBy(app.user) %}active{% endif %}">
+                                    <a href="{{ path('favorite_advert', {'id': advert.id}) }}" class="mp-favorite-btn {% if advert.isFavoritedBy(app.user) %}active{% endif %}" title="Bookmark Advert">
                                         <i class="fa-{% if advert.isFavoritedBy(app.user) %}solid{% else %}regular{% endif %} fa-heart"></i>
                                     </a>
                                 {% endif %}
+                                
                                 {# Price overlay #}
                                 <div class="mp-card-img-overlay">
                                     <span class="mp-price">£{{ advert.price | number_format(0) }}</span>
@@ -46,33 +100,30 @@
                                 <h5 class="mp-card-title">
                                     <a href="{{ path('show_advert', {'slug': advert.slug}) }}">{{ advert.title }}</a>
                                 </h5>
-                                <div class="d-flex flex-wrap gap-2 mb-2">
+
+                                <div class="d-flex flex-wrap gap-2 mb-3">
                                     {% if advert.category %}
-                                        <span class="mp-badge mp-badge-category">
+                                        <a href="{{ path('live_search', {'title': '', 'category': advert.category.id}) }}" class="mp-badge mp-badge-category text-decoration-none">
                                             <i class="fa-solid fa-tag"></i> {{ advert.category.categoryName }}
+                                        </a>
+                                    {% endif %}
+
+                                    {% if advert.location %}
+                                        <span class="mp-badge" style="background: rgba(255, 255, 255, 0.05); color: var(--mp-text-secondary); border: 1px solid var(--mp-border-glass);">
+                                            <i class="fa-solid fa-location-dot me-1 text-danger"></i> {{ advert.location }}
                                         </span>
                                     {% endif %}
-                                    {% set statusClass = {
-                                        'published': 'published',
-                                        'pending_review': 'pending',
-                                        'draft': 'draft',
-                                        'sold': 'sold',
-                                        'rejected': 'rejected'
-                                    } %}
-                                    <span class="mp-badge mp-badge-{{ statusClass[advert.status.value] | default('draft') }}">
-                                        {{ advert.status.label }}
-                                    </span>
                                 </div>
                             </div>
 
                             {# Footer #}
                             <div class="mp-card-footer">
                                 <div class="mp-card-meta">
-                                    <i class="fa-solid fa-user-circle"></i>
-                                    {{ advert.getUser().getUsername() }}
+                                    <i class="fa-solid fa-user-circle text-primary"></i>
+                                    <span class="fw-medium" style="color: var(--mp-text-primary);">{{ advert.getUser().getUsername() }}</span>
                                 </div>
                                 <div class="mp-card-meta">
-                                    <i class="fa-regular fa-clock"></i>
+                                    <i class="fa-regular fa-clock me-1"></i>
                                     {{ advert.timestamp | date('d M Y') }}
                                 </div>
                             </div>
@@ -82,7 +133,7 @@
             </div>
 
             {# Pagination #}
-            <nav class="mt-4 d-flex justify-content-center" aria-label="Advert pagination">
+            <nav class="mt-5 d-flex justify-content-center" aria-label="Advert pagination">
                 {{ knp_pagination_render(pagination, 'pagination/twitter_bootstrap_v4_pagination.html.twig') }}
             </nav>
         {% endif %}

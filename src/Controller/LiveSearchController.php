@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Advert;
-use App\Form\Type\SearchFormType;
+use App\Entity\Categories;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,53 +11,37 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-
 class LiveSearchController extends AbstractController
 {
-      #[Route('/search', name: 'live_search')]
-      public function searchAdvert(EntityManagerInterface $entityManager, Request $request,PaginatorInterface $paginator): Response
-      {
-          // get search parameters
-          $title = $request->get('title');
-          $category = $request->get('category');
+    #[Route('/search', name: 'live_search')]
+    public function searchAdvert(EntityManagerInterface $entityManager, Request $request, PaginatorInterface $paginator): Response
+    {
+        $title = trim((string) $request->query->get('title', ''));
+        $category = (int) $request->query->get('category', 0);
 
-          // check if search parameters are empty
-          if (!$title && $category == 0)
-          {
-              // redirect to homepage
-              return $this->redirectToRoute('home');
-          } else if($title && $category == 0) {//check if title search parameter is not empty
-              // get search results with pagination
-              $pagination = $paginator->paginate(
-                  $entityManager->getRepository(Advert::class)->titleSearchQuery($title),
-                  $request->query->getInt('page', 1),
-                  4
-              );
-              // get search form
-              $searchForm = $this->createForm(SearchFormType::class);
+        $categories = $entityManager->getRepository(Categories::class)->findAll();
 
-              // render search results
-              return $this->render('advert/filter_search.html.twig', [
-                  'pagination' => $pagination,
-                  'search_form' => $searchForm->createView(),
-              ]);
-          } else{//check if category search parameter is not empty
-              // get search results with pagination
-              $pagination = $paginator->paginate(
-                  $entityManager->getRepository(Advert::class)->filteredSearchQuery($title, $category),
-                  $request->query->getInt('page', 1),
-                  4
-              );
+        if (empty($title) && $category === 0) {
+            return $this->redirectToRoute('home');
+        }
 
-              // get search form
-              $searchForm = $this->createForm(SearchFormType::class);
+        if (!empty($title) && $category === 0) {
+            $query = $entityManager->getRepository(Advert::class)->titleSearchQuery($title);
+        } else {
+            $query = $entityManager->getRepository(Advert::class)->filteredSearchQuery($title, $category);
+        }
 
-              // render search results
-              return $this->render('advert/filter_search.html.twig', [
-                  'pagination' => $pagination,
-                  'search_form' => $searchForm->createView()
-              ]);
-          }
+        $pagination = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            6
+        );
 
-      }
+        return $this->render('advert/filter_search.html.twig', [
+            'pagination' => $pagination,
+            'categories' => $categories,
+            'search_title' => $title,
+            'search_category' => $category,
+        ]);
+    }
 }

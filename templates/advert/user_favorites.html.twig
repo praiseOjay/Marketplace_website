@@ -29,7 +29,7 @@
                     <div class="col-12 col-sm-6 col-lg-4 mp-animate-in">
                         <div class="mp-card h-100">
                             <div class="mp-card-img-wrapper">
-                                <img src="{{ asset('images/' ~ advert.imageFileName) }}" alt="{{ advert.title }}" loading="lazy" decoding="async">
+                                <img src="{{ asset(advert.imageFileName ? 'images/' ~ advert.imageFileName : 'images/default_image.png') }}" alt="{{ advert.title }}" loading="lazy" decoding="async">
                                 <a href="{{ path('favorite_advert', {'id': advert.id}) }}" class="mp-favorite-btn active" title="Remove from saved">
                                     <i class="fa-solid fa-heart"></i>
                                 </a>

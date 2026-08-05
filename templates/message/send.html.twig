@@ -9,7 +9,7 @@
             <p class="mp-form-subtitle">Send an inquiry to <strong>{{ recipient.username }}</strong> regarding <strong>{{ advert.title }}</strong></p>
 
             <div class="p-3 mb-4 rounded d-flex align-items-center gap-3" style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--mp-border-glass);">
-                <img src="{{ asset('images/' ~ advert.imageFileName) }}" alt="{{ advert.title }}" style="width: 64px; height: 48px; object-fit: cover; border-radius: var(--mp-radius-sm);">
+                <img src="{{ asset(advert.imageFileName ? 'images/' ~ advert.imageFileName : 'images/default_image.png') }}" alt="{{ advert.title }}" style="width: 64px; height: 48px; object-fit: cover; border-radius: var(--mp-radius-sm);">
                 <div>
                     <h6 class="mb-0" style="font-weight: 600; color: var(--mp-text-primary);">{{ advert.title }}</h6>
                     <span class="mp-price mp-price-sm">£{{ advert.price | number_format(0) }}</span>
@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="mt-4 d-grid gap-2">
-                    {{ form_widget(form.send, {'attr': {'class': 'mp-btn mp-btn-primary w-100 justify-content-center'}, 'label': 'Send Inquiry'}) }}
+                    <button type="submit" class="mp-btn mp-btn-primary w-100 justify-content-center"><i class="fa-solid fa-paper-plane me-1"></i> Send Inquiry</button>
                     <a href="{{ path('show_advert', {'slug': advert.slug}) }}" class="mp-btn mp-btn-outline w-100 justify-content-center mt-1">Cancel</a>
                 </div>
             {{ form_end(form) }}

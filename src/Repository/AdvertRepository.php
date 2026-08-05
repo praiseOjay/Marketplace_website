@@ -40,13 +40,15 @@ class AdvertRepository extends ServiceEntityRepository
      */
     public function titleSearchQuery($title)
     {
+        $cleanTitle = addcslashes(trim((string)$title), '%_');
+
         return $this->createQueryBuilder('a')
             ->addSelect('c', 'u')
             ->leftJoin('a.category', 'c')
             ->leftJoin('a.username', 'u')
             ->where('a.isPublished = true')
             ->andWhere('a.title LIKE :title')
-            ->setParameter('title', '%'.$title.'%')
+            ->setParameter('title', '%'.$cleanTitle.'%')
             ->orderBy('a.id', 'DESC')
             ->getQuery();
     }
@@ -56,6 +58,8 @@ class AdvertRepository extends ServiceEntityRepository
      */
     public function filteredSearchQuery($title, $category)
     {
+        $cleanTitle = addcslashes(trim((string)$title), '%_');
+
         return $this->createQueryBuilder('a')
             ->addSelect('c', 'u')
             ->leftJoin('a.category', 'c')
@@ -63,8 +67,8 @@ class AdvertRepository extends ServiceEntityRepository
             ->where('a.isPublished = true')
             ->andWhere('a.title LIKE :title')
             ->andWhere('a.category = :category')
-            ->setParameter('title', '%'.$title.'%')
-            ->setParameter('category', $category)
+            ->setParameter('title', '%'.$cleanTitle.'%')
+            ->setParameter('category', (int)$category)
             ->orderBy('a.id', 'DESC')
             ->getQuery();
     }

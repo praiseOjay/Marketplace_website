@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Advert;
+use App\Entity\Categories;
 use App\Entity\User;
 use App\Form\Type\AdvertFormType;
 use App\Form\Type\SearchFormType;
@@ -98,14 +99,17 @@ class AdvertController extends AbstractController
         ]);
     }
 
+    #[Route('/', name: 'root_home')]
     #[Route('/advert/index', name: 'home')]
     public function allAdverts(EntityManagerInterface $entityManager, Request $request, PaginatorInterface $paginator): Response
     {
         $pagination = $paginator->paginate(
             $entityManager->getRepository(Advert::class)->allAdvertsQuery(),
             $request->query->getInt('page', 1),
-            5
+            6
         );
+
+        $categories = $entityManager->getRepository(Categories::class)->findAll();
 
         $searchForm = $this->createForm(SearchFormType::class);
         $searchForm->handleRequest($request);
@@ -120,36 +124,29 @@ class AdvertController extends AbstractController
         return $this->render('advert/index.html.twig', [
             'search_form' => $searchForm->createView(),
             'pagination' => $pagination,
+            'categories' => $categories,
         ]);
     }
 
     #[Route('/advert/my_adverts', name: 'user_advert')]
     #[IsGranted('ROLE_USER', message: 'You need to be logged in to access this page!')]
-    public function userAdvert(Request $request, PaginatorInterface $paginator): Response
+    public function userAdvert(Request $request, PaginatorInterface $paginator, EntityManagerInterface $entityManager): Response
     {
         /** @var User $user */
         $user = $this->getUser();
         $adverts = $user->getAdverts();
 
+        $categories = $entityManager->getRepository(Categories::class)->findAll();
+
         $pagination = $paginator->paginate(
             $adverts,
             $request->query->getInt('page', 1),
-            5
+            6
         );
-
-        $searchForm = $this->createForm(SearchFormType::class);
-        $searchForm->handleRequest($request);
-        if ($searchForm->isSubmitted() && $searchForm->isValid()) {
-            $ad = $searchForm->getData();
-            $title = $ad->getTitle();
-            $category = $ad->getCategory();
-
-            return $this->redirectToRoute('live_search', ['title' => $title, 'category' => $category?->getId()]);
-        }
 
         return $this->render('advert/user_advert.html.twig', [
             'pagination' => $pagination,
-            'search_form' => $searchForm->createView(),
+            'categories' => $categories,
         ]);
     }
 
