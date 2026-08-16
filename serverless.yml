@@ -1,0 +1,40 @@
+service: marketplace-website
+
+provider:
+  name: aws
+  region: eu-west-2
+  stage: prod
+  environment:
+    APP_ENV: prod
+    APP_SECRET: ${env:APP_SECRET, '29f44a83b1a2e7c4f09d0a6231e5f291'}
+    DATABASE_URL: "sqlite:////tmp/data.db"
+    BREF_BINARY_RESPONSES: '1'
+
+plugins:
+  - ./vendor/bref/bref
+
+functions:
+  api:
+    handler: public/index.php
+    description: 'Symfony 7 Marketplace Web App'
+    runtime: php-82-fpm
+    timeout: 28 # API Gateway max timeout is 29s
+    events:
+      - httpApi: '*'
+
+package:
+  patterns:
+    - '!tests/**'
+    - '!docs/**'
+    - '!screenshots/**'
+    - '!.git/**'
+    - '!compose.yaml'
+    - '!compose.override.yaml'
+    - '!phpunit.xml.dist'
+    - '!symfony.exe'
+    - '!node_modules/**'
+    - '!vendor/**/doc/**'
+    - '!vendor/**/docs/**'
+    - '!vendor/**/*.md'
+    - 'php/conf.d/**'
+    - 'var/data.db'

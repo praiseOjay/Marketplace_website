@@ -2,6 +2,9 @@
 
 A modern, full-featured **Marketplace & Classifieds Web Application** built with **PHP 8.2+**, **Symfony 7**, **Doctrine ORM**, **Twig**, and **Bootstrap 5**. Designed with a sleek dark glassmorphism aesthetic, instant buyer-seller messaging, responsive grid layouts, category filtering, and robust security defenses.
 
+🌐 **Live AWS Serverless Deployment**: **[https://jkjl56qvog.execute-api.eu-west-2.amazonaws.com](https://jkjl56qvog.execute-api.eu-west-2.amazonaws.com)**  
+🛡️ **Admin Dashboard**: **[https://jkjl56qvog.execute-api.eu-west-2.amazonaws.com/admin](https://jkjl56qvog.execute-api.eu-west-2.amazonaws.com/admin)**
+
 ---
 
 ## 📸 Screenshots & Showcase
@@ -29,6 +32,18 @@ A modern, full-featured **Marketplace & Classifieds Web Application** built with
 - 🛡️ **Role-Based Access Control (RBAC)**: Fine-grained permissions for Users, Moderators, and Admins via EasyAdmin 4.
 - 🖼️ **Automated WebP Image Optimization**: Image upload processing, thumbnail generation, and lazy loading.
 - 📦 **Dummy Fixtures Included**: Pre-configured with realistic users, categories, and high-resolution item photography.
+- ☁️ **AWS Serverless Ready**: 100% Free Tier perpetual deployment via AWS Lambda + Bref + API Gateway.
+
+---
+
+## ☁️ Cloud & Serverless Architecture (AWS Free Tier)
+
+This application is configured for zero-cost perpetual deployment on **AWS Lambda** using **Bref** and the **Serverless Framework**:
+
+- **Compute**: AWS Lambda (PHP 8.2 FPM via Bref layer) — *1 Million requests/month free*.
+- **API Gateway**: HTTP API v2 routing — *1 Million requests/month free*.
+- **Storage**: Ephemeral SQLite database synced on cold boot (`/tmp/data.db`) + persistent media assets.
+- **Region**: London (`eu-west-2`).
 
 ---
 
@@ -55,6 +70,7 @@ A modern, full-featured **Marketplace & Classifieds Web Application** built with
 
 - **PHP**: 8.2+
 - **Framework**: Symfony 7
+- **Serverless Runtime**: Bref 2.x
 - **Database / ORM**: SQLite / Doctrine ORM
 - **Templating**: Twig Engine
 - **Admin Panel**: EasyAdmin 4
@@ -63,7 +79,7 @@ A modern, full-featured **Marketplace & Classifieds Web Application** built with
 
 ---
 
-## 🚀 Quickstart & Installation
+## 🚀 Quickstart & Local Setup
 
 ### 1. Clone Repository
 ```bash
@@ -83,12 +99,28 @@ php bin/console doctrine:schema:update --force
 php bin/console doctrine:fixtures:load --no-interaction
 ```
 
-### 4. Run Development Server
-Using Symfony CLI or built-in PHP web server:
+### 4. Compile Asset Map
+```bash
+php bin/console asset-map:compile
+```
+
+### 5. Run Development Server
 ```bash
 php -S 127.0.0.1:8000 -t public public/index.php
 ```
 Open **[http://127.0.0.1:8000](http://127.0.0.1:8000)** in your browser.
+
+---
+
+## ☁️ Deploy to AWS Lambda (Free Tier)
+
+```powershell
+# 1. Warm production cache
+$env:APP_ENV="prod"; php bin/console cache:clear --env=prod
+
+# 2. Deploy via Serverless Framework
+$env:APP_ENV="prod"; npx serverless@3 deploy
+```
 
 ---
 
@@ -97,8 +129,8 @@ Open **[http://127.0.0.1:8000](http://127.0.0.1:8000)** in your browser.
 | Role | Username | Email | Password |
 |---|---|---|---|
 | **Admin** | `admin` | `admin@marketplace.com` | `admin123` |
-| **User** | `johndoe` | `john@example.com` | `password123` |
-| **User** | `sarah_smith` | `sarah@example.com` | `password123` |
+| **User 1** | `johndoe` | `john@example.com` | `password123` |
+| **User 2** | `sarah_smith` | `sarah@example.com` | `password123` |
 
 ---
 
