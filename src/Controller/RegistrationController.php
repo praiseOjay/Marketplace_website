@@ -2,14 +2,11 @@
 
 namespace App\Controller;
 
-
 use App\Entity\User;
 use App\Form\Type\RegistrationFormType;
 use App\Form\Type\SearchFormType;
-use App\Service\RecaptchaService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -21,44 +18,34 @@ class RegistrationController extends AbstractController
     public function register(
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
-        EntityManagerInterface $entityManager,
-        RecaptchaService $recaptchaService
+        EntityManagerInterface $entityManager
     ): Response {
         // create a new User entity
         $user = new User();
         // create the form
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
+
         // process the form
-        if ($form->isSubmitted()) {
-            // Verify reCAPTCHA token
-            $recaptchaToken = $request->request->get('recaptcha_token') 
-                ?? $request->request->get('g-recaptcha-response');
+        if ($form->isSubmitted() && $form->isValid()) {
+            // encode the plain password
+            $user->setPassword(
+                $userPasswordHasher->hashPassword(
+                    $user,
+                    $form->get('plainPassword')->getData()
+                )
+            );
+            // set the default image
+            $user->setImageFileName('default_image.png');
 
-            if ($recaptchaService->getSiteKey() && !$recaptchaService->verify($recaptchaToken, 'register', $request->getClientIp())) {
-                $form->addError(new FormError('Security verification failed. Please refresh and try again.'));
-            }
+            // save the User
+            $entityManager->persist($user);
+            $entityManager->flush();
 
-            if ($form->isValid()) {
-                // encode the plain password
-                $user->setPassword(
-                    $userPasswordHasher->hashPassword(
-                        $user,
-                        $form->get('plainPassword')->getData()
-                    )
-                );
-                // set the default image
-                $user->setImageFileName('default_image.png');
+            $this->addFlash('success', 'Account created successfully! Please sign in.');
 
-                // save the User
-                $entityManager->persist($user);
-                $entityManager->flush();
-
-                $this->addFlash('success', 'Account created successfully! Please sign in.');
-
-                // redirect to the login page
-                return $this->redirectToRoute('app_login');
-            }
+            // redirect to the login page
+            return $this->redirectToRoute('app_login');
         }
 
         // create the search form

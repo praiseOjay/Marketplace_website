@@ -14,7 +14,7 @@
                 </div>
             {% endif %}
 
-            <form action="{{ path('app_login') }}" method="post" data-recaptcha-action="login" class="recaptcha-form">
+            <form action="{{ path('app_login') }}" method="post">
                 <div class="mp-form-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="_username" value="{{ last_username }}" class="form-control" placeholder="Enter your username" required autofocus>

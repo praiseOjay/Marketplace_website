@@ -8,7 +8,7 @@
             <h2><i class="fa-solid fa-user-pen me-2" style="color: var(--mp-accent);"></i>Edit Profile</h2>
             <p class="mp-form-subtitle">Update your personal account details and password</p>
 
-            {{ form_start(form, {'attr': {'data-recaptcha-action': 'edit_profile', 'class': 'recaptcha-form'}}) }}
+            {{ form_start(form) }}
                 <div class="mp-form-group">
                     {{ form_label(form.username, 'Username', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}

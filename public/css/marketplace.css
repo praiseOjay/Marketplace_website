@@ -682,11 +682,6 @@ a:hover {
     color: var(--mp-accent);
 }
 
-/* reCAPTCHA Badge Polish */
-.grecaptcha-badge {
-    z-index: 9999 !important;
-}
-
 /* ---------- Empty State ---------- */
 .mp-empty-state {
     text-align: center;
