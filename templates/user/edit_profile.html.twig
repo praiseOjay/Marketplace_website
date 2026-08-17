@@ -8,7 +8,7 @@
             <h2><i class="fa-solid fa-user-pen me-2" style="color: var(--mp-accent);"></i>Edit Profile</h2>
             <p class="mp-form-subtitle">Update your personal account details and password</p>
 
-            {{ form_start(form) }}
+            {{ form_start(form, {'attr': {'data-recaptcha-action': 'edit_profile', 'class': 'recaptcha-form'}}) }}
                 <div class="mp-form-group">
                     {{ form_label(form.username, 'Username', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
@@ -28,13 +28,23 @@
 
                     <div class="mp-form-group">
                         {{ form_label(form.plainPassword.first, 'New Password', {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Leave blank to keep current'}}) }}
+                        <div class="mp-password-wrapper">
+                            {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Leave blank to keep current'}}) }}
+                            <button type="button" class="mp-password-toggle" aria-label="Show password" title="Show password" tabindex="-1">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
                         {{ form_errors(form.plainPassword.first) }}
                     </div>
 
                     <div class="mp-form-group mb-0">
                         {{ form_label(form.plainPassword.second, 'Confirm New Password', {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirm new password'}}) }}
+                        <div class="mp-password-wrapper">
+                            {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirm new password'}}) }}
+                            <button type="button" class="mp-password-toggle" aria-label="Show password" title="Show password" tabindex="-1">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
                         {{ form_errors(form.plainPassword.second) }}
                     </div>
                 </div>

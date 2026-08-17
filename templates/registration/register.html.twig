@@ -14,7 +14,7 @@
                 </div>
             {% endif %}
 
-            {{ form_start(registrationForm) }}
+            {{ form_start(registrationForm, {'attr': {'data-recaptcha-action': 'register', 'class': 'recaptcha-form'}}) }}
                 <div class="mp-form-group">
                     {{ form_label(registrationForm.username, 'Username', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(registrationForm.username, {attr: {'class': 'form-control', 'placeholder': 'Choose a unique username'}}) }}
@@ -29,7 +29,12 @@
 
                 <div class="mp-form-group">
                     {{ form_label(registrationForm.plainPassword, 'Password', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(registrationForm.plainPassword, {attr: {'class': 'form-control', 'placeholder': '6-20 characters'}}) }}
+                    <div class="mp-password-wrapper">
+                        {{ form_widget(registrationForm.plainPassword, {attr: {'class': 'form-control', 'placeholder': '6-20 characters'}}) }}
+                        <button type="button" class="mp-password-toggle" aria-label="Show password" title="Show password" tabindex="-1">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
                     {{ form_errors(registrationForm.plainPassword) }}
                 </div>
 

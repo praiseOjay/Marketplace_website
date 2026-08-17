@@ -6,8 +6,10 @@ use App\Entity\User;
 use App\Form\Type\SearchFormType;
 use App\Form\Type\UserFormType;
 use App\Service\FileUploader;
+use App\Service\RecaptchaService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -22,7 +24,8 @@ class UserController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        RecaptchaService $recaptchaService
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -30,25 +33,34 @@ class UserController extends AbstractController
         $form = $this->createForm(UserFormType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $imageFile = $form->get('imageFile')->getData();
-            if ($imageFile) {
-                $imageFileName = $fileUploader->upload($imageFile, true);
-                $user->setImageFileName($imageFileName);
+        if ($form->isSubmitted()) {
+            $recaptchaToken = $request->request->get('recaptcha_token') 
+                ?? $request->request->get('g-recaptcha-response');
+
+            if ($recaptchaService->getSiteKey() && !$recaptchaService->verify($recaptchaToken, 'edit_profile', $request->getClientIp())) {
+                $form->addError(new FormError('Security verification failed. Please refresh and try again.'));
             }
 
-            $plainPassword = $form->get('plainPassword')->getData();
-            if (!empty($plainPassword)) {
-                $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
-                $user->setPassword($hashedPassword);
+            if ($form->isValid()) {
+                $imageFile = $form->get('imageFile')->getData();
+                if ($imageFile) {
+                    $imageFileName = $fileUploader->upload($imageFile, true);
+                    $user->setImageFileName($imageFileName);
+                }
+
+                $plainPassword = $form->get('plainPassword')->getData();
+                if (!empty($plainPassword)) {
+                    $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
+                    $user->setPassword($hashedPassword);
+                }
+
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Profile updated successfully.');
+
+                return $this->redirectToRoute('show_profile');
             }
-
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Profile updated successfully.');
-
-            return $this->redirectToRoute('show_profile');
         }
 
         $searchForm = $this->createForm(SearchFormType::class);

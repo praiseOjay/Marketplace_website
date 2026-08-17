@@ -504,6 +504,7 @@ a:hover {
     margin-bottom: 0.75rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -637,6 +638,53 @@ a:hover {
 .form-control:focus, .form-select:focus {
     border-color: var(--mp-accent) !important;
     box-shadow: 0 0 0 3px var(--mp-accent-soft) !important;
+}
+
+/* Password Visibility Toggle */
+.mp-password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.mp-password-wrapper .form-control {
+    padding-right: 2.85rem !important;
+    width: 100%;
+}
+
+.mp-password-toggle {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--mp-text-muted);
+    cursor: pointer;
+    padding: 0.35rem 0.5rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color var(--mp-transition-fast), transform var(--mp-transition-fast);
+    z-index: 10;
+    line-height: 1;
+}
+
+.mp-password-toggle:hover {
+    color: var(--mp-accent);
+    transform: translateY(-50%) scale(1.12);
+}
+
+.mp-password-toggle:focus {
+    outline: none;
+    color: var(--mp-accent);
+}
+
+/* reCAPTCHA Badge Polish */
+.grecaptcha-badge {
+    z-index: 9999 !important;
 }
 
 /* ---------- Empty State ---------- */

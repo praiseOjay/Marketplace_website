@@ -1,9 +1,6 @@
 # 🛍️ Marketplace — Premium Classifieds Web Application
 
-A modern, full-featured **Marketplace & Classifieds Web Application** built with **PHP 8.2+**, **Symfony 7**, **Doctrine ORM**, **Twig**, and **Bootstrap 5**. Designed with a sleek dark glassmorphism aesthetic, instant buyer-seller messaging, responsive grid layouts, category filtering, and robust security defenses.
-
-🌐 **Live AWS Serverless Deployment**: **[https://jkjl56qvog.execute-api.eu-west-2.amazonaws.com](https://jkjl56qvog.execute-api.eu-west-2.amazonaws.com)**  
-🛡️ **Admin Dashboard**: **[https://jkjl56qvog.execute-api.eu-west-2.amazonaws.com/admin](https://jkjl56qvog.execute-api.eu-west-2.amazonaws.com/admin)**
+A modern, full-featured **Marketplace & Classifieds Web Application** built with **PHP 8.2+**, **Symfony 7**, **Doctrine ORM**, **Twig**, and **Bootstrap 5**. Designed with a sleek dark glassmorphism aesthetic, instant buyer-seller messaging, responsive grid layouts, category filtering, password visibility toggles, Google reCAPTCHA v3 bot protection, and robust security defenses.
 
 ---
 
@@ -18,11 +15,16 @@ A modern, full-featured **Marketplace & Classifieds Web Application** built with
 ### 3. Direct Buyer-Seller Messaging Thread
 <img src="./docs/screenshots/messaging_chat.png" alt="Messaging Thread" width="100%" />
 
+### 4. Authentication Security: Password Visibility Toggle & Google reCAPTCHA v3
+<img src="./docs/screenshots/auth_security_recaptcha.png" alt="Auth Security & Password Visibility" width="100%" />
+
 ---
 
 ## ✨ Core Features
 
 - 🎨 **Modern Dark Glassmorphic UI**: Vibrant gradient accents, glassmorphic cards, and micro-interactions.
+- 👁️ **Interactive Password Visibility Toggle**: One-click show/hide password buttons on login, registration, and profile password updates.
+- 🤖 **Google reCAPTCHA v3 Enterprise Bot Protection**: Frictionless spam mitigation and automated bot defense across authentication and user forms.
 - 🚀 **Dynamic Category Quick Filter**: Instant category filtering with active state highlighting.
 - 🔍 **Integrated Search Capsule**: Search by keyword, category, or location seamlessly across all viewports.
 - 📱 **100% Fully Responsive Layout**: Tailored breakpoints for desktop, tablet, and mobile screens.
@@ -32,23 +34,12 @@ A modern, full-featured **Marketplace & Classifieds Web Application** built with
 - 🛡️ **Role-Based Access Control (RBAC)**: Fine-grained permissions for Users, Moderators, and Admins via EasyAdmin 4.
 - 🖼️ **Automated WebP Image Optimization**: Image upload processing, thumbnail generation, and lazy loading.
 - 📦 **Dummy Fixtures Included**: Pre-configured with realistic users, categories, and high-resolution item photography.
-- ☁️ **AWS Serverless Ready**: 100% Free Tier perpetual deployment via AWS Lambda + Bref + API Gateway.
-
----
-
-## ☁️ Cloud & Serverless Architecture (AWS Free Tier)
-
-This application is configured for zero-cost perpetual deployment on **AWS Lambda** using **Bref** and the **Serverless Framework**:
-
-- **Compute**: AWS Lambda (PHP 8.2 FPM via Bref layer) — *1 Million requests/month free*.
-- **API Gateway**: HTTP API v2 routing — *1 Million requests/month free*.
-- **Storage**: Ephemeral SQLite database synced on cold boot (`/tmp/data.db`) + persistent media assets.
-- **Region**: London (`eu-west-2`).
 
 ---
 
 ## 🔒 Security Architecture
 
+- **Google reCAPTCHA v3 Automated Defense**: Invisible client-side token generation paired with backend verification (`App\Service\RecaptchaService`) and `LoginRecaptchaListener` to prevent brute-force attacks, credential stuffing, and bot submissions.
 - **SQL Injection Defense**: Strict prepared statement parameter binding (`addcslashes($title, '%_')` and Doctrine Query Builder parameterization).
 - **XSS & Injection Protection**: HTML auto-escaping across all Twig templates and input sanitization.
 - **HTTP Security Headers**: Automated listener injecting `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `X-XSS-Protection`, `Referrer-Policy`, and `Permissions-Policy`.
@@ -70,8 +61,8 @@ This application is configured for zero-cost perpetual deployment on **AWS Lambd
 
 - **PHP**: 8.2+
 - **Framework**: Symfony 7
-- **Serverless Runtime**: Bref 2.x
 - **Database / ORM**: SQLite / Doctrine ORM
+- **Security & Anti-Bot**: Google reCAPTCHA v3
 - **Templating**: Twig Engine
 - **Admin Panel**: EasyAdmin 4
 - **Pagination**: KnpPaginatorBundle
@@ -92,35 +83,25 @@ cd Marketplace_website
 composer install
 ```
 
-### 3. Setup Database & Load Fixtures
+### 3. Configure Google reCAPTCHA (.env)
+```env
+RECAPTCHA_SITE_KEY=6LeSZootAAAAAMryTY_Y9m5W4yA0MGsQ6wLA23kn
+RECAPTCHA_SECRET_KEY=6LeSZootAAAAAC1hPX6VQFOPiM5ux9wMRrrGh60V
+```
+
+### 4. Setup Database & Load Fixtures
 ```bash
 php bin/console doctrine:database:create --if-not-exists
 php bin/console doctrine:schema:update --force
 php bin/console doctrine:fixtures:load --no-interaction
 ```
 
-### 4. Compile Asset Map
-```bash
-php bin/console asset-map:compile
-```
-
 ### 5. Run Development Server
+Using built-in PHP web server:
 ```bash
 php -S 127.0.0.1:8000 -t public public/index.php
 ```
 Open **[http://127.0.0.1:8000](http://127.0.0.1:8000)** in your browser.
-
----
-
-## ☁️ Deploy to AWS Lambda (Free Tier)
-
-```powershell
-# 1. Warm production cache
-$env:APP_ENV="prod"; php bin/console cache:clear --env=prod
-
-# 2. Deploy via Serverless Framework
-$env:APP_ENV="prod"; npx serverless@3 deploy
-```
 
 ---
 
