@@ -17,6 +17,11 @@
             </div>
 
             {{ form_start(form) }}
+                <div class="mp-hp-wrapper" aria-hidden="true">
+                    <label for="website_url">Leave this field blank</label>
+                    <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off" value="">
+                </div>
+
                 <div class="mp-form-group">
                     {{ form_label(form.content, 'Your Message', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(form.content, {'attr': {'class': 'form-control', 'rows': 4, 'placeholder': 'Hi ' ~ recipient.username ~ ', is this item still available?'}}) }}

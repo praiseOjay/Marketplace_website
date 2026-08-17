@@ -9,6 +9,11 @@
             <p class="mp-form-subtitle">Fill in the details to list your item on the marketplace</p>
 
             {{ form_start(form) }}
+                <div class="mp-hp-wrapper" aria-hidden="true">
+                    <label for="website_url">Leave this field blank</label>
+                    <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off" value="">
+                </div>
+
                 <div class="mp-form-group">
                     {{ form_label(form.title, 'Title', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'e.g. iPhone 15 Pro Max 256GB'}}) }}

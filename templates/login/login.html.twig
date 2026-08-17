@@ -15,6 +15,11 @@
             {% endif %}
 
             <form action="{{ path('app_login') }}" method="post">
+                <div class="mp-hp-wrapper" aria-hidden="true">
+                    <label for="website_url">Leave this field blank</label>
+                    <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off" value="">
+                </div>
+
                 <div class="mp-form-group">
                     <label for="username">Username</label>
                     <input type="text" id="username" name="_username" value="{{ last_username }}" class="form-control" placeholder="Enter your username" required autofocus>

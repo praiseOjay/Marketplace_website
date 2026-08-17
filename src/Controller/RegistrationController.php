@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\Type\RegistrationFormType;
 use App\Form\Type\SearchFormType;
+use App\Service\HoneypotValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +19,8 @@ class RegistrationController extends AbstractController
     public function register(
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        HoneypotValidator $honeypotValidator
     ): Response {
         // create a new User entity
         $user = new User();
@@ -28,6 +30,11 @@ class RegistrationController extends AbstractController
 
         // process the form
         if ($form->isSubmitted() && $form->isValid()) {
+            // Check Honeypot spam field
+            if ($honeypotValidator->isSpam($request)) {
+                // Silently redirect bot to login
+                return $this->redirectToRoute('app_login');
+            }
             // encode the plain password
             $user->setPassword(
                 $userPasswordHasher->hashPassword(

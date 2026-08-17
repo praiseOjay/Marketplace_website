@@ -9,6 +9,7 @@ use App\Form\Type\AdvertFormType;
 use App\Form\Type\SearchFormType;
 use App\Security\Voter\AdvertVoter;
 use App\Service\FileUploader;
+use App\Service\HoneypotValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,13 +23,20 @@ class AdvertController extends AbstractController
 {
     #[Route('/advert/new', name: 'new_advert')]
     #[IsGranted('ROLE_USER', message: 'You need to be logged in to access this page!')]
-    public function newAdvert(Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader): Response
-    {
+    public function newAdvert(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        FileUploader $fileUploader,
+        HoneypotValidator $honeypotValidator
+    ): Response {
         $advert = new Advert();
         $form = $this->createForm(AdvertFormType::class, $advert);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($honeypotValidator->isSpam($request)) {
+                return $this->redirectToRoute('user_advert');
+            }
             /** @var User $user */
             $user = $this->getUser();
 

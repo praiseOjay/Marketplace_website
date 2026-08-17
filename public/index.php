@@ -43,7 +43,11 @@ if ($requestPath !== '/' && $requestPath !== '/index.php' && is_file($filePath))
 
     $mimeType = $mimeTypes[$extension] ?? 'application/octet-stream';
     header('Content-Type: ' . $mimeType);
-    header('Cache-Control: public, max-age=31536000, immutable');
+    if (in_array($extension, ['css', 'js'])) {
+        header('Cache-Control: public, max-age=3600, must-revalidate');
+    } else {
+        header('Cache-Control: public, max-age=86400');
+    }
     header('Content-Length: ' . filesize($filePath));
     readfile($filePath);
     exit;

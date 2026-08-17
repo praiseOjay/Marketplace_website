@@ -38,3 +38,4 @@ package:
     - '!vendor/**/*.md'
     - 'php/conf.d/**'
     - 'var/data.db'
+    - 'var/cache/prod/**'

@@ -682,6 +682,19 @@ a:hover {
     color: var(--mp-accent);
 }
 
+/* Honeypot Spam Protection Field */
+.mp-hp-wrapper {
+    display: none !important;
+    opacity: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    height: 0 !important;
+    width: 0 !important;
+    z-index: -9999 !important;
+    pointer-events: none !important;
+}
+
 /* ---------- Empty State ---------- */
 .mp-empty-state {
     text-align: center;

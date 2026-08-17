@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\Type\MessageFormType;
 use App\Form\Type\SearchFormType;
 use App\Repository\MessageRepository;
+use App\Service\HoneypotValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,7 +47,8 @@ class MessageController extends AbstractController
     public function sendMessage(
         int $advertId,
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        HoneypotValidator $honeypotValidator
     ): Response {
         /** @var User $currentUser */
         $currentUser = $this->getUser();
@@ -71,6 +73,10 @@ class MessageController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($honeypotValidator->isSpam($request)) {
+                return $this->redirectToRoute('message_thread', ['otherUserId' => $recipient->getId()]);
+            }
+
             $entityManager->persist($message);
             $entityManager->flush();
 
@@ -95,7 +101,8 @@ class MessageController extends AbstractController
         int $otherUserId,
         MessageRepository $messageRepository,
         EntityManagerInterface $entityManager,
-        Request $request
+        Request $request,
+        HoneypotValidator $honeypotValidator
     ): Response {
         /** @var User $currentUser */
         $currentUser = $this->getUser();
@@ -121,6 +128,10 @@ class MessageController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($honeypotValidator->isSpam($request)) {
+                return $this->redirectToRoute('message_thread', ['otherUserId' => $otherUserId]);
+            }
+
             $entityManager->persist($reply);
             $entityManager->flush();
 

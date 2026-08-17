@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Form\Type\SearchFormType;
 use App\Form\Type\UserFormType;
 use App\Service\FileUploader;
+use App\Service\HoneypotValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +23,8 @@ class UserController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         FileUploader $fileUploader,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        HoneypotValidator $honeypotValidator
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -31,6 +33,9 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($honeypotValidator->isSpam($request)) {
+                return $this->redirectToRoute('show_profile');
+            }
             $imageFile = $form->get('imageFile')->getData();
             if ($imageFile) {
                 $imageFileName = $fileUploader->upload($imageFile, true);

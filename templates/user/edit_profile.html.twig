@@ -9,6 +9,11 @@
             <p class="mp-form-subtitle">Update your personal account details and password</p>
 
             {{ form_start(form) }}
+                <div class="mp-hp-wrapper" aria-hidden="true">
+                    <label for="website_url">Leave this field blank</label>
+                    <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off" value="">
+                </div>
+
                 <div class="mp-form-group">
                     {{ form_label(form.username, 'Username', {'label_attr': {'class': 'form-label'}}) }}
                     {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}

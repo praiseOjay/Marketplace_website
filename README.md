@@ -27,6 +27,7 @@ A modern, full-featured **Marketplace & Classifieds Web Application** built with
 
 - 🎨 **Modern Dark Glassmorphic UI**: Vibrant gradient accents, glassmorphic cards, and micro-interactions.
 - 👁️ **Interactive Password Visibility Toggle**: One-click show/hide password buttons across login, registration, and profile password update forms.
+- 🍯 **Automated Honeypot Bot Defense**: Invisible zero-latency anti-bot and anti-spam trap protecting authentication, registration, adverts, and messaging without false-positive blocks.
 - 🚀 **Dynamic Category Quick Filter**: Instant category filtering with active state highlighting.
 - 🔍 **Integrated Search Capsule**: Search by keyword, category, or location seamlessly across all viewports.
 - 📱 **100% Fully Responsive Layout**: Tailored breakpoints for desktop, tablet, and mobile screens.
@@ -54,6 +55,7 @@ This application is configured for zero-cost perpetual deployment on **AWS Lambd
 ## 🔒 Security Architecture
 
 - **Client-Side Credential Safety**: Interactive show/hide password toggling with focus retention and dynamic icon updates for user convenience and error reduction during credential entry.
+- **Automated Honeypot Anti-Bot & Spam Traps**: Multi-field hidden traps across registration, authentication, advert creation, and user messaging that silently deflect automated spambots with zero latency impact.
 - **SQL Injection Defense**: Strict prepared statement parameter binding (`addcslashes($title, '%_')` and Doctrine Query Builder parameterization).
 - **XSS & Injection Protection**: HTML auto-escaping across all Twig templates and input sanitization.
 - **HTTP Security Headers**: Automated listener injecting `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `X-XSS-Protection`, `Referrer-Policy`, and `Permissions-Policy`.
